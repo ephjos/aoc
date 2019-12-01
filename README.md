@@ -1,5 +1,7 @@
 # aoc2019 - Stats
 
+I'm not necessarily going for speed, but I might as well track it.
+
 ## 01
 
 | -    | *Part 1* | *Part 2* |
