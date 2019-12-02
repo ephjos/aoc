@@ -21,7 +21,7 @@ t1:
 
 t2:
 	make b2
-	./part2 < input | tee out1
+	./part2 < input | tee out2
 
 clean:
 	rm -rf part1 part2 out*
