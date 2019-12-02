@@ -49,11 +49,13 @@ func main() {
 		for j := 0; j < 99; j++ {
 			var dataCopy = make([]int, len(data))
 			copy(dataCopy, data)
-			output := runIntCode(dataCopy, i, j)
-			if output == 19690720 {
-				fmt.Println(100*i + j)
-				return
-			}
+			go func(dataCopy []int, i, j int) {
+				output := runIntCode(dataCopy, i, j)
+				if output == 19690720 {
+					fmt.Println(100*i + j)
+					return
+				}
+			}(dataCopy, i, j)
 		}
 	}
 }
