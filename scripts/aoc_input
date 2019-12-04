@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+import requests
+import datetime
+from pathlib import Path
+import argparse
+
+def get_date_info():
+    now = datetime.datetime.now()
+    day = int(now.strftime("%d"))
+    year = int(now.strftime("%Y"))
+    return year,day
+
+def get_input(url, cookies):
+    resp = requests.get(url=url, cookies=cookies)
+    return resp.text
+
+if __name__ == "__main__":
+    year, day = get_date_info()
+
+    parser = argparse.ArgumentParser(description='Download input for Advent of Code')
+    parser.add_argument('-y',
+                        '--year',
+                        type=int,
+                        default=year,
+                        help='Years\'s input to fetch')
+    parser.add_argument('-d',
+                        '--day',
+                        type=int,
+                        default=day,
+                        help='Day\'s input to fetch')
+    args = parser.parse_args()
+
+    url_fmt = "https://adventofcode.com/{}/day/{}/input"
+    url = url_fmt.format(args.year,args.day)
+
+    session_file= Path().home() / "./.aoc_session"
+
+    try:
+        with session_file.open() as f:
+            session = f.read().strip()
+            cookie = {"session": session}
+            print(get_input(url,cookie))
+    except Exception as e:
+        print(e)
+        print("\nMake sure to place your cookie on one line in {}"
+              .format(session_file))
+
+
+
+
