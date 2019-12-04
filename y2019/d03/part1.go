@@ -5,9 +5,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type Point struct {
@@ -79,21 +81,50 @@ func contains(a []Point, p Point) bool {
 	return false
 }
 
+func worker(wg *sync.WaitGroup, keys1, keys2 []Point, a, b int, channel chan Point) {
+	defer wg.Done()
+	for i := a; i < b; i++ {
+		key := keys1[i]
+		if contains(keys2, key) {
+			channel <- key
+		}
+	}
+}
+
+// Using gorountines provided a ~3x speed up
 func handleWires(wires *[2]map[Point]DistanceOnWire) {
 	wire1 := (*wires)[0]
 	keys1 := getKeys(wire1)
 	wire2 := (*wires)[1]
 	keys2 := getKeys(wire2)
 
-	crosses := make([]Point, 0)
+	crosses := make(chan Point)
+	wg := &sync.WaitGroup{}
+	batch := 5000
+	l := len(keys1)
 
-	for _, k := range keys1 {
-		if contains(keys2, k) {
-			crosses = append(crosses, k)
+	for i := 0; i < l; i += batch {
+		wg.Add(1)
+		if i+batch < l {
+			go worker(wg, keys1, keys2, i, i+batch, crosses)
+		} else {
+			go worker(wg, keys1, keys2, i, l-1, crosses)
 		}
 	}
 
-	fmt.Println(crosses)
+	go func() {
+		wg.Wait()
+		close(crosses)
+	}()
+
+	min := math.MaxInt32
+	for point := range crosses {
+		mDistance := point.X + point.Y
+		if mDistance < min {
+			min = mDistance
+		}
+	}
+	fmt.Println(min)
 }
 
 func main() {
