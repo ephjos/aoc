@@ -12,7 +12,7 @@ def get_date_info():
 
 def get_input(url, cookies):
     resp = requests.get(url=url, cookies=cookies)
-    return resp.text
+    return resp.text.rstrip("\n")
 
 if __name__ == "__main__":
     year, day = get_date_info()
