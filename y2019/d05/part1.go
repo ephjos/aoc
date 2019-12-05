@@ -4,15 +4,14 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
 	input := bufio.NewScanner(os.Stdin)
+	input.Scan()
 
-	for input.Scan() {
-		line := input.Text()
-		fmt.Println(line)
-	}
+	intCode := MakeIntCode(strings.Split(input.Text(), ","))
+	intCode.Compute(1)
 }

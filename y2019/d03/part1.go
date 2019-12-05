@@ -119,7 +119,7 @@ func handleWires(wires *[2]map[Point]DistanceOnWire) {
 
 	min := math.MaxInt32
 	for point := range crosses {
-		mDistance := point.X + point.Y
+		mDistance := int(math.Abs(float64(point.X)) + math.Abs(float64(point.Y)))
 		if mDistance < min {
 			min = mDistance
 		}
