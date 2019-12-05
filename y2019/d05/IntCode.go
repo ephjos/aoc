@@ -7,6 +7,25 @@ import (
 	"strconv"
 )
 
+const (
+	OP_ADD  int = 1
+	OP_MULT int = 2
+
+	OP_INPUT  int = 3
+	OP_OUTPUT int = 4
+
+	OP_JUMP_IF_TRUE  int = 5
+	OP_JUMP_IF_FALSE int = 6
+
+	OP_LESS_THAN int = 7
+	OP_EQUALS    int = 8
+
+	OP_HALT int = 99
+
+	MODE_POSITION  int = 0
+	MODE_IMMEDIATE int = 1
+)
+
 type IntCode struct {
 	data []int
 }
@@ -20,13 +39,10 @@ func parseOpCode(opcode int) (op int, m1 int, m2 int, m3 int) {
 }
 
 func getValue(data []int, mode, p int) int {
-	POSITION := 0
-	IMMEDIATE := 1
-
 	switch mode {
-	case POSITION:
+	case MODE_POSITION:
 		return data[p]
-	case IMMEDIATE:
+	case MODE_IMMEDIATE:
 		return p
 	default:
 		panic(fmt.Sprintf("Mode: %d,Param: %d\n", mode, p))
@@ -37,15 +53,14 @@ func getValue(data []int, mode, p int) int {
 func (ic IntCode) Compute(input int) {
 	for i := 0; i < len(ic.data); {
 		opcode, m1, m2, m3 := parseOpCode(ic.data[i])
-		m1 = m1
-		m2 = m2
 		m3 = m3
-		if opcode == 99 {
+
+		if opcode == OP_HALT {
 			break
 		}
 
 		switch opcode {
-		case 1:
+		case OP_ADD:
 			p1 := ic.data[i+1]
 			p2 := ic.data[i+2]
 			p3 := ic.data[i+3]
@@ -56,7 +71,7 @@ func (ic IntCode) Compute(input int) {
 
 			i += 4
 			break
-		case 2:
+		case OP_MULT:
 			p1 := ic.data[i+1]
 			p2 := ic.data[i+2]
 			p3 := ic.data[i+3]
@@ -68,14 +83,14 @@ func (ic IntCode) Compute(input int) {
 
 			i += 4
 			break
-		case 3:
+		case OP_INPUT:
 			p1 := ic.data[i+1]
 
 			ic.data[p1] = input
 
 			i += 2
 			break
-		case 4:
+		case OP_OUTPUT:
 			p1 := ic.data[i+1]
 
 			v1 := getValue(ic.data, m1, p1)
@@ -83,7 +98,7 @@ func (ic IntCode) Compute(input int) {
 
 			i += 2
 			break
-		case 5:
+		case OP_JUMP_IF_TRUE:
 			p1 := ic.data[i+1]
 			p2 := ic.data[i+2]
 
@@ -96,7 +111,7 @@ func (ic IntCode) Compute(input int) {
 				i += 3
 			}
 			break
-		case 6:
+		case OP_JUMP_IF_FALSE:
 			p1 := ic.data[i+1]
 			p2 := ic.data[i+2]
 
@@ -109,7 +124,7 @@ func (ic IntCode) Compute(input int) {
 				i += 3
 			}
 			break
-		case 7:
+		case OP_LESS_THAN:
 			p1 := ic.data[i+1]
 			p2 := ic.data[i+2]
 			p3 := ic.data[i+3]
@@ -125,7 +140,7 @@ func (ic IntCode) Compute(input int) {
 
 			i += 4
 			break
-		case 8:
+		case OP_EQUALS:
 			p1 := ic.data[i+1]
 			p2 := ic.data[i+2]
 			p3 := ic.data[i+3]
