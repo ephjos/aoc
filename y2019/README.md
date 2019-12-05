@@ -24,6 +24,12 @@ I'm not necessarily going for speed, but I might as well track it.
 | Rank | 27533    | 23790    |
 
 ## 04
+
+| -    | *Part 1* | *Part 2* |
+| :--: | :--:     | :--:     |
+| Time | 18:54:16 | 19:33:53 |
+| Rank | 24314    | 22222    |
+
 ## 05
 ## 06
 ## 07
