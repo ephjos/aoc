@@ -1,4 +1,4 @@
-// Part 2
+// Part 1
 // Instead of treating the relation as a tree,
 // treat it as a graph and do Dijkstra's
 
@@ -10,6 +10,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
 )
 
 type Node struct {
@@ -77,6 +78,11 @@ func Dijkstra(graph map[string]*Node, source, target string) int {
 	panic(fmt.Sprintf("Couldn't find %s\n", target))
 }
 
+func worker(graph map[string]*Node, source, target string, channel chan int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	channel <- Dijkstra(graph, source, target)
+}
+
 func handleOrbits(orbits [][]string) {
 	nodes := make(map[string]*Node)
 
@@ -98,10 +104,26 @@ func handleOrbits(orbits [][]string) {
 
 	}
 
-	fmt.Println("Running Dijkstra ...")
-	dist := Dijkstra(nodes, "SAN", "YOU")
+	dists := make(chan int)
+	wg := &sync.WaitGroup{}
 
-	fmt.Println("Shortest path:", dist-2)
+	fmt.Println("Running Dijkstra for each node...")
+	for label := range nodes {
+		wg.Add(1)
+		go worker(nodes, "COM", label, dists, wg)
+	}
+
+	go func() {
+		wg.Wait()
+		close(dists)
+	}()
+
+	sum := 0
+	for dist := range dists {
+		sum += dist
+	}
+
+	fmt.Println("Total:", sum)
 }
 
 func main() {
