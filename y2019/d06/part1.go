@@ -79,7 +79,6 @@ func handleOrbits(orbits [][]string) {
 	}
 
 	COM := nodeMap["COM"]
-	COM.PreOrder()
 	fmt.Println(GetOrbitCount(COM))
 }
 
