@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
 )
 
 func permutations(arr []int, f func([]int)) {
@@ -46,12 +47,16 @@ func getMax(ic *IntCode) {
 		// /blob/master/day07/day07.go
 
 		channels := make([]chan int, 5)
+		mu := &sync.Mutex{}
 
 		for i, phase := range arr {
 			channels[i] = make(chan int)
 			cp := ic
 			go cp.Compute(channels[i])
+
+			mu.Lock()
 			channels[i] <- phase
+			mu.Unlock()
 		}
 
 		output := 0

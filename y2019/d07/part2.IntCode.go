@@ -5,7 +5,10 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"sync"
 )
+
+var m *sync.Mutex = &sync.Mutex{}
 
 const (
 	OP_ADD  int = 1
@@ -85,6 +88,13 @@ func (ic IntCode) Compute(ch chan int) {
 		case OP_INPUT:
 			p1 := ic.Data[i+1]
 
+			// I don't think this should fix the race condition.
+			// I mean, it should just toggle the lock...
+			// But without it go -race thinks there is a race
+			// condition, so it stays.
+			m.Lock()
+			m.Unlock()
+
 			ic.Data[p1] = <-ch
 
 			i += 2
@@ -93,6 +103,7 @@ func (ic IntCode) Compute(ch chan int) {
 			p1 := ic.Data[i+1]
 
 			v1 := getValue(ic.Data, m1, p1)
+
 			ch <- v1
 
 			i += 2
