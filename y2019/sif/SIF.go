@@ -114,11 +114,11 @@ func (s *SIF) SaveImage(filename string) {
 }
 
 func (s *SIF) Visualize() {
-	pixels := [][]int{}
-	layerMask := [][]bool{}
 	images := []*image.Gray{}
 
 	for u := 1; u <= s.Height; u++ {
+		pixels := [][]int{}
+		layerMask := [][]bool{}
 		// Allow all points at start
 		for i := s.Height - u; i < s.Height; i++ {
 			pixels = append(pixels, []int{})
