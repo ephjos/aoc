@@ -120,7 +120,7 @@ func (s *SIF) Visualize() {
 		pixels := [][]int{}
 		layerMask := [][]bool{}
 		// Allow all points at start
-		for i := s.Height - u; i < s.Height; i++ {
+		for i := 0; i < s.Height; i++ {
 			pixels = append(pixels, []int{})
 			layerMask = append(layerMask, []bool{})
 			for j := 0; j < s.Width; j++ {
@@ -179,6 +179,7 @@ func (s *SIF) Visualize() {
 		img := &image.Gray{Pix: pix, Stride: effectiveWidth, Rect: image.Rect(0, 0, effectiveWidth, effectiveHeight)}
 		images = append(images, img)
 	}
+
 	pixelgl.Run(func() {
 		cfg := pixelgl.WindowConfig{
 			Title:  "Pixel Rocks!",
