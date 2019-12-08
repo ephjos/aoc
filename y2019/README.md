@@ -45,7 +45,19 @@ I'm not necessarily going for speed, but I might as well track it.
 | Rank | 10464    | 10213    |
 
 ## 07
+
+| -    | *Part 1* | *Part 2* |
+| :--: | :--:     | :--:     |
+| Time | 00:31:07 | 14:01:06 |
+| Rank | 1131     | 6392     |
+
 ## 08
+
+| -    | *Part 1* | *Part 2* |
+| :--: | :--:     | :--:     |
+| Time | 11:35:23 | 12:12:08 |
+| Rank | 10991    | 10427    |
+
 ## 09
 ## 10
 ## 11
