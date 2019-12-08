@@ -43,7 +43,16 @@ func (s *SIF) Parse(data string) {
 	s.Layers = layers
 }
 
+func (s *SIF) checkForError() {
+	if s.Layers == nil {
+		panic("Please initialize the struct and call" +
+			".Parse before calling this function")
+	}
+}
+
 func (s *SIF) SaveImage(filename string) {
+	s.checkForError()
+
 	pixels := [][]int{}
 	layerMask := [][]bool{}
 
@@ -114,9 +123,12 @@ func (s *SIF) SaveImage(filename string) {
 }
 
 func (s *SIF) Visualize() {
+	s.checkForError()
+
 	images := []*image.Gray{}
 
-	for u := 1; u <= s.Height; u++ {
+	l := len(s.Layers)
+	for u := 1; u <= l; u++ {
 		pixels := [][]int{}
 		layerMask := [][]bool{}
 		// Allow all points at start
@@ -129,7 +141,7 @@ func (s *SIF) Visualize() {
 			}
 		}
 
-		for _, layer := range s.Layers[s.Height-u:] {
+		for _, layer := range s.Layers[l-u:] {
 			for i, part := range layer {
 				for j, v := range part {
 					if layerMask[i][j] {
@@ -180,6 +192,7 @@ func (s *SIF) Visualize() {
 		images = append(images, img)
 	}
 
+	// Start the pixelgl window
 	pixelgl.Run(func() {
 		cfg := pixelgl.WindowConfig{
 			Title:  "Pixel Rocks!",
@@ -193,19 +206,31 @@ func (s *SIF) Visualize() {
 		index := 0
 
 		for !win.Closed() {
-			if index >= len(images) {
-				break
-			}
-			pic := pixel.PictureDataFromImage(images[index])
-			index += 1
+			// Show next image from images array
+			if index < len(images) {
+				pic := pixel.PictureDataFromImage(images[index])
+				index += 1
 
-			sprite := pixel.NewSprite(pic, pic.Bounds())
-			mat := pixel.IM
-			mat = mat.Moved(win.Bounds().Center())
-			mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(10, 10))
-			sprite.Draw(win, mat)
-			win.Update()
-			time.Sleep(time.Second)
+				sprite := pixel.NewSprite(pic, pic.Bounds())
+				mat := pixel.IM
+				mat = mat.Moved(win.Bounds().Center())
+				mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(10, 10))
+				sprite.Draw(win, mat)
+
+				win.Update()
+				time.Sleep(time.Second / 10.0)
+			} else { // Show the final image
+				pic := pixel.PictureDataFromImage(images[index-1])
+
+				sprite := pixel.NewSprite(pic, pic.Bounds())
+				mat := pixel.IM
+				mat = mat.Moved(win.Bounds().Center())
+				mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(10, 10))
+				sprite.Draw(win, mat)
+
+				win.Update()
+			}
+
 		}
 	})
 }
