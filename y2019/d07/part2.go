@@ -36,74 +36,48 @@ type ChanBundle struct {
 	Input, Output, Complete chan int
 }
 
-func MakeChanBundle() *ChanBundle {
-	return &ChanBundle{
-		make(chan int),
-		make(chan int),
-		make(chan int),
-	}
-}
-
 func getMax(ic *IntCode) {
 	phaseSettings := []int{5, 6, 7, 8, 9}
 	max := math.MinInt32
 
 	permutations(phaseSettings, func(arr []int) {
+		// Reference for my approach to this function:
+		// https://github.com/stevotvr/adventofcode2019
+		// /blob/master/day07/day07.go
 
-		icA := ic
-		aChan := MakeChanBundle()
-		go func() {
-			icA.Compute(aChan.Input, aChan.Output, aChan.Complete)
-		}()
+		channels := make([]chan int, 5)
 
-		icB := ic
-		bChan := MakeChanBundle()
-		go func() {
-			icB.Compute(bChan.Input, bChan.Output, bChan.Complete)
-		}()
-
-		icC := ic
-		cChan := MakeChanBundle()
-		go func() {
-			icC.Compute(cChan.Input, cChan.Output, cChan.Complete)
-		}()
-
-		icD := ic
-		dChan := MakeChanBundle()
-		go func() {
-			icD.Compute(dChan.Input, dChan.Output, dChan.Complete)
-		}()
-
-		icE := ic
-		eChan := MakeChanBundle()
-		go func() {
-			icE.Compute(eChan.Input, eChan.Output, eChan.Complete)
-		}()
-
-		go func() {
-			aChan.Input <- arr[0]
-			bChan.Input <- arr[1]
-			cChan.Input <- arr[2]
-			dChan.Input <- arr[3]
-			eChan.Input <- arr[4]
-
-			aChan.Input <- 0
-			for {
-				bChan.Input <- <-aChan.Output
-				cChan.Input <- <-bChan.Output
-				dChan.Input <- <-cChan.Output
-				eChan.Input <- <-dChan.Output
-				aChan.Input <- <-eChan.Output
-			}
-		}()
-
-		final := <-eChan.Complete
-
-		if final > max {
-			max = final
+		for i, phase := range arr {
+			channels[i] = make(chan int)
+			cp := ic
+			go cp.Compute(channels[i])
+			channels[i] <- phase
 		}
 
+		output := 0
+		halt := false
+
+		for !halt {
+			for i := range arr {
+				select {
+				case channels[i] <- output:
+				default:
+					halt = true
+				}
+
+				if halt {
+					break
+				}
+
+				output = <-channels[i]
+			}
+		}
+
+		if output > max {
+			max = output
+		}
 	})
+
 	fmt.Println(max)
 }
 

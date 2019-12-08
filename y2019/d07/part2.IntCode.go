@@ -27,8 +27,7 @@ const (
 )
 
 type IntCode struct {
-	Data  []int
-	Index int
+	Data []int
 }
 
 func parseOpCode(opcode int) (op int, m1 int, m2 int, m3 int) {
@@ -51,9 +50,8 @@ func getValue(Data []int, mode, p int) int {
 
 }
 
-func (ic IntCode) Compute(input, output, complete chan int) {
-	lastOutput := -1
-	for i := ic.Index; i < len(ic.Data); {
+func (ic IntCode) Compute(ch chan int) {
+	for i := 0; i < len(ic.Data); {
 		opcode, m1, m2, _ := parseOpCode(ic.Data[i])
 
 		if opcode == OP_HALT {
@@ -87,7 +85,7 @@ func (ic IntCode) Compute(input, output, complete chan int) {
 		case OP_INPUT:
 			p1 := ic.Data[i+1]
 
-			ic.Data[p1] = <-input
+			ic.Data[p1] = <-ch
 
 			i += 2
 			break
@@ -95,8 +93,7 @@ func (ic IntCode) Compute(input, output, complete chan int) {
 			p1 := ic.Data[i+1]
 
 			v1 := getValue(ic.Data, m1, p1)
-			output <- v1
-			lastOutput = v1
+			ch <- v1
 
 			i += 2
 			break
@@ -162,11 +159,6 @@ func (ic IntCode) Compute(input, output, complete chan int) {
 			break
 		}
 	}
-
-	complete <- lastOutput
-
-	close(output)
-	close(complete)
 }
 
 func MakeIntCode(rawData []string) *IntCode {
@@ -177,5 +169,5 @@ func MakeIntCode(rawData []string) *IntCode {
 		Data = append(Data, t)
 	}
 
-	return &IntCode{Data, 0}
+	return &IntCode{Data}
 }
