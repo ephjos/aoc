@@ -195,7 +195,7 @@ func (s *SIF) Visualize() {
 	// Start the pixelgl window
 	pixelgl.Run(func() {
 		cfg := pixelgl.WindowConfig{
-			Title:  "Pixel Rocks!",
+			Title:  "SIF Visualizer",
 			Bounds: pixel.R(0, 0, 1024, 768),
 		}
 		win, err := pixelgl.NewWindow(cfg)
