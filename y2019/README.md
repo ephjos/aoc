@@ -59,6 +59,12 @@ I'm not necessarily going for speed, but I might as well track it.
 | Rank | 10991    | 10427    |
 
 ## 09
+
+| -    | *Part 1* | *Part 2* |
+| :--: | :--:     | :--:     |
+| Time | 18:22:20 | 18:40:36 |
+| Rank | 9850     | 9840     |
+
 ## 10
 ## 11
 ## 12
