@@ -24,9 +24,8 @@ func getAsteroidPoints(scanner *bufio.Scanner) []Point {
 				points = append(points, Point{i, j})
 			}
 		}
+		j += 1
 	}
-
-	j += 1
 
 	return points
 }
