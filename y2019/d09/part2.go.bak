@@ -15,9 +15,9 @@ func main() {
 	line := input.Text()
 	tokens := strings.Split(line, ",")
 
-	ic := New(tokens)
+	ic := MakeIntCode(tokens)
 
-	ch := make(chan int64)
+	ch := make(chan int)
 
 	go ic.Compute(ch)
 

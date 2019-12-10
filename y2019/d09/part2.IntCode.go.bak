@@ -12,32 +12,32 @@ import (
 var m *sync.Mutex = &sync.Mutex{}
 
 const (
-	OP_ADD  int64 = 1
-	OP_MULT int64 = 2
+	OP_ADD  int = 1
+	OP_MULT int = 2
 
-	OP_INPUT  int64 = 3
-	OP_OUTPUT int64 = 4
+	OP_INPUT  int = 3
+	OP_OUTPUT int = 4
 
-	OP_JUMP_IF_TRUE  int64 = 5
-	OP_JUMP_IF_FALSE int64 = 6
+	OP_JUMP_IF_TRUE  int = 5
+	OP_JUMP_IF_FALSE int = 6
 
-	OP_LESS_THAN int64 = 7
-	OP_EQUALS    int64 = 8
+	OP_LESS_THAN int = 7
+	OP_EQUALS    int = 8
 
-	OP_REL_OFFSET int64 = 9
+	OP_REL_OFFSET int = 9
 
-	OP_HALT int64 = 99
+	OP_HALT int = 99
 
-	MODE_POSITION  int64 = 0
-	MODE_IMMEDIATE int64 = 1
-	MODE_RELATIVE  int64 = 2
+	MODE_POSITION  int = 0
+	MODE_IMMEDIATE int = 1
+	MODE_RELATIVE  int = 2
 )
 
 type IntCode struct {
-	Data []int64
+	Data []int
 }
 
-func parseOpCode(opcode int64) (op int64, m1 int64, m2 int64, m3 int64) {
+func parseOpCode(opcode int) (op int, m1 int, m2 int, m3 int) {
 	op = opcode % 100
 	m1 = opcode % 1000 / 100
 	m2 = opcode % 10000 / 1000
@@ -46,13 +46,12 @@ func parseOpCode(opcode int64) (op int64, m1 int64, m2 int64, m3 int64) {
 }
 
 type ComputeState struct {
-	index, opcode, relativeBase int64
+	index, opcode, relativeBase int
 }
 
-func (ic IntCode) getValue(state *ComputeState, mode, position, value int64) int64 {
+func (ic IntCode) getValue(state *ComputeState, mode, position, value int) int {
 
-	if ((state.opcode == 1 || state.opcode == 2 || state.opcode == 7 ||
-		state.opcode == 8) && position == 3) ||
+	if ((state.opcode == 1 || state.opcode == 2 || state.opcode == 7 || state.opcode == 8) && position == 3) ||
 		(state.opcode == 3 && position == 1) {
 		switch mode {
 		case MODE_POSITION, MODE_IMMEDIATE:
@@ -77,19 +76,14 @@ func (ic IntCode) getValue(state *ComputeState, mode, position, value int64) int
 
 }
 
-func (ic *IntCode) write(dest, value int64) {
-	if dest >= int64(len(ic.Data)) {
-		temp := make([]int64, dest*2)
-		copy(temp, ic.Data)
-		ic.Data = temp
-	}
+func (ic IntCode) Compute(ch chan int) {
+	// Pad memory
+	PAD_LENGTH := 2000000
+	PADDING := make([]int, PAD_LENGTH)
+	ic.Data = append(ic.Data, PADDING...)
 
-	ic.Data[dest] = value
-}
-
-func (ic IntCode) Compute(ch chan int64) {
-	relativeBase := int64(0)
-	for i := int64(0); i < int64(len(ic.Data)); {
+	relativeBase := 0
+	for i := 0; i < len(ic.Data); {
 		opcode, m1, m2, m3 := parseOpCode(ic.Data[i])
 		state := &ComputeState{
 			i, opcode, relativeBase,
@@ -109,7 +103,7 @@ func (ic IntCode) Compute(ch chan int64) {
 			v2 := ic.getValue(state, m2, 2, p2)
 			v3 := ic.getValue(state, m3, 3, p3)
 
-			ic.write(v3, v1+v2)
+			ic.Data[v3] = v1 + v2
 
 			i += 4
 			break
@@ -122,7 +116,7 @@ func (ic IntCode) Compute(ch chan int64) {
 			v2 := ic.getValue(state, m2, 2, p2)
 			v3 := ic.getValue(state, m3, 3, p3)
 
-			ic.write(v3, v1*v2)
+			ic.Data[v3] = v1 * v2
 
 			i += 4
 			break
@@ -138,7 +132,7 @@ func (ic IntCode) Compute(ch chan int64) {
 			m.Lock()
 			m.Unlock()
 
-			ic.write(v1, <-ch)
+			ic.Data[v1] = <-ch
 
 			log.Print(fmt.Sprintf("Input %d received.\n", ic.Data[v1]))
 
@@ -224,16 +218,15 @@ func (ic IntCode) Compute(ch chan int64) {
 			break
 		}
 	}
-
 	close(ch)
 }
 
-func New(rawData []string) *IntCode {
-	var Data []int64
+func MakeIntCode(rawData []string) *IntCode {
+	var Data []int
 
 	for _, v := range rawData {
 		t, _ := strconv.Atoi(v)
-		Data = append(Data, int64(t))
+		Data = append(Data, t)
 	}
 
 	return &IntCode{Data}
