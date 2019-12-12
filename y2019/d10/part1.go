@@ -4,7 +4,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"math"
 	"os"
 	"time"
@@ -20,8 +19,8 @@ type Point struct {
 	Y float64 // Distance from top
 }
 
-func getAsteroidPoints(scanner *bufio.Scanner) ([]Point, int, int) {
-	points := make([]Point, 0)
+func getAsteroidPoints(scanner *bufio.Scanner) (map[Point]int, int, int) {
+	points := make(map[Point]int, 0)
 	h := 0
 	count := 0
 
@@ -30,7 +29,7 @@ func getAsteroidPoints(scanner *bufio.Scanner) ([]Point, int, int) {
 		line := scanner.Text()
 		for i, v := range line {
 			if string(v) == "#" {
-				points = append(points, Point{float64(i), float64(j)})
+				points[Point{float64(i), float64(j)}] = 0
 			}
 			count += 1
 		}
@@ -43,7 +42,7 @@ func getAsteroidPoints(scanner *bufio.Scanner) ([]Point, int, int) {
 	return points, w, h
 }
 
-func visualize(points *[]Point, w, h int) {
+func visualize(points *map[Point]int, w, h int) {
 	pixelgl.Run(func() {
 		cfg := pixelgl.WindowConfig{
 			Title:  "SIF Visualizer",
@@ -51,7 +50,7 @@ func visualize(points *[]Point, w, h int) {
 		}
 		win, err := pixelgl.NewWindow(cfg)
 		if err != nil {
-			panic(err)
+			panic("Cannot load OpenGL, your version may be too old...")
 		}
 
 		offset := 20.
@@ -68,8 +67,7 @@ func visualize(points *[]Point, w, h int) {
 
 		vecs := make([]pixel.Vec, 0)
 
-		for _, point := range *points {
-
+		for point := range *points {
 			vec := pixel.V(point.X*wStep, height-(point.Y*hStep)).Add(offsetVec)
 			vecs = append(vecs, vec)
 			imd.Push(vec)
@@ -85,8 +83,8 @@ func visualize(points *[]Point, w, h int) {
 			if i < len(vecs) {
 				lines.Clear()
 
-				scale := 1000.
-				res := 360.
+				scale := 200.
+				res := 30.
 				base := pixel.V(0, 0)
 
 				for j := 0.; j < res; j++ {
@@ -99,6 +97,7 @@ func visualize(points *[]Point, w, h int) {
 
 					base = pixel.V(x, y).Add(vecs[i])
 
+					lines.Color = pixel.RGB(1, 1, 1)
 					lines.Push(vecs[i], base)
 					lines.Line(1)
 				}
@@ -106,7 +105,7 @@ func visualize(points *[]Point, w, h int) {
 				lines.Draw(win)
 
 				i += 1
-				time.Sleep(time.Second / 20.)
+				time.Sleep(time.Second / 2.)
 			}
 
 			win.Update()
@@ -119,6 +118,6 @@ func visualize(points *[]Point, w, h int) {
 func main() {
 	input := bufio.NewScanner(os.Stdin)
 	points, w, h := getAsteroidPoints(input)
-	fmt.Println(points)
+
 	visualize(&points, w, h)
 }
