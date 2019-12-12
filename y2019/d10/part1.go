@@ -4,7 +4,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"math"
 	"os"
 	"time"
@@ -51,7 +50,7 @@ func visualize(points *[]Point, w, h int) {
 		}
 		win, err := pixelgl.NewWindow(cfg)
 		if err != nil {
-			panic(err)
+			panic("Cannot load OpenGL, maybe your version is too old...")
 		}
 
 		offset := 20.
@@ -119,6 +118,6 @@ func visualize(points *[]Point, w, h int) {
 func main() {
 	input := bufio.NewScanner(os.Stdin)
 	points, w, h := getAsteroidPoints(input)
-	fmt.Println(points)
+
 	visualize(&points, w, h)
 }
