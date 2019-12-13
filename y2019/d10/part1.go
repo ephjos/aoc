@@ -75,14 +75,17 @@ func getMostInView(points []Point) {
 	}
 
 	max := 0
-	for _, s := range slopes {
+	maxIndex := Point{}
+	for i, s := range slopes {
 		count := len(s)
 		if count > max {
 			max = count
+			maxIndex = i
 		}
 	}
 
 	fmt.Println(max)
+	fmt.Println(maxIndex)
 }
 
 func main() {
