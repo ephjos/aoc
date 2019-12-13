@@ -47,7 +47,7 @@ func getAsteroidPoints(scanner *bufio.Scanner) []Point {
 	return points
 }
 
-func getMostInView(points []Point) {
+func getMostInView(points []Point) map[Slope]int {
 	slopes := make(map[Point]map[Slope]int, 0)
 
 	for _, center := range points {
@@ -75,19 +75,32 @@ func getMostInView(points []Point) {
 	}
 
 	max := 0
-	for _, s := range slopes {
+	maxIndex := Point{}
+	for i, s := range slopes {
 		count := len(s)
 		if count > max {
 			max = count
+			maxIndex = i
 		}
 	}
 
-	fmt.Println(max)
+	return slopes[maxIndex]
+}
+
+func printPoints(points []Point, slopes map[Slope]int) {
+	for slope := range slopes {
+		fmt.Println(slope)
+		rads := math.Atan2(slope.rise, slope.run)
+		degs := rads * (180. / math.Pi)
+
+		fmt.Println(rads, degs)
+	}
 }
 
 func main() {
 	input := bufio.NewScanner(os.Stdin)
 	points := getAsteroidPoints(input)
 
-	getMostInView(points)
+	slopes := getMostInView(points)
+	printPoints(points, slopes)
 }
