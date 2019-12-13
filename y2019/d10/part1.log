@@ -1,0 +1,35 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2019.11.15)  13 DEC 2019 11:53
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**part1.go
+(./part1.go
+LaTeX2e <2019-10-01> patch level 1
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1 /
+     / Part 1
+? 
+! Emergency stop.
+ ...                                              
+                                                  
+l.1 /
+     / Part 1
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+ 
+Here is how much of TeX's memory you used:
+ 7 strings out of 492167
+ 264 string characters out of 6131557
+ 59380 words of memory out of 5000000
+ 4468 multiletter control sequences out of 15000+600000
+ 3640 words of font info for 14 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 5i,0n,4p,20b,14s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!
