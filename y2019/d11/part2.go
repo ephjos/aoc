@@ -6,7 +6,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
+	"time"
 )
 
 const (
@@ -80,20 +82,22 @@ func main() {
 	colorMap[point] = 1
 
 	for {
-		defer func() {
-			if r := recover(); r != nil {
-				for i := -20; i < 50; i++ {
-					for j := -50; j < 50; j++ {
-						if colorMap[Point{i, j}] == 1 {
-							fmt.Print("X")
-						} else {
-							fmt.Print(" ")
-						}
-					}
-					fmt.Println()
+		c := exec.Command("clear")
+		c.Stdout = os.Stdout
+		c.Run()
+
+		for i := 5; i > -15; i-- {
+			for j := 0; j < 50; j++ {
+				if colorMap[Point{j, i}] == 1 {
+					fmt.Print("XX")
+				} else {
+					fmt.Print("  ")
 				}
 			}
-		}()
+			fmt.Println()
+		}
+		time.Sleep(50000000)
+
 		ch <- colorMap[point]
 		paintColor := <-ch
 		turnDirection := <-ch
