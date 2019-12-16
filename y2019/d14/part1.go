@@ -12,7 +12,7 @@ import (
 )
 
 var reactionMap = make(map[string][]Chemical, 0)
-var excess = make(map[string]int, 0)
+var store = make(map[string]int, 0)
 
 type Chemical struct {
 	amount int
@@ -63,24 +63,36 @@ func parseReaction(line string) Reaction {
 	return r
 }
 
-func getOreCount(name string, amount int) int {
-
+func getOreCount(name string, needed int) int {
 	if name == "ORE" {
-		return amount
+		return needed
 	}
 
-	count := int(math.Min(float64(excess[name]), float64(amount)))
-	amount -= count
-	excess[name] -= count
+	stored := store[name]
+	if stored > 0 {
+		if stored >= needed {
+			store[name] -= needed
+			return 0
+		} else {
+			needed -= stored
+			store[name] = 0
+			return getOreCount(name, needed)
+		}
+	}
 
-	sub := 0
+	canMake := reactionMap[name][0].amount
+
+	batches := int(math.Ceil(float64(needed) / float64(canMake)))
+	excess := (canMake * batches) - needed
+
+	store[name] = excess
+
+	oreNeeded := 0
 	for _, ingredient := range reactionMap[name][1:] {
-		sub += getOreCount(ingredient.name, 1)
+		oreNeeded += getOreCount(ingredient.name, batches*ingredient.amount)
 	}
 
-	fmt.Println(name, count, amount, sub)
-
-	return sub
+	return oreNeeded
 }
 
 func main() {
