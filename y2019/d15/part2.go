@@ -13,6 +13,7 @@ import (
 
 var visited = make(map[Point]bool, 0)
 var flooded = make(map[Point]bool, 0)
+var walls = make(map[Point]bool, 0)
 var DIRECTIONS = []Direction{UP, DOWN, LEFT, RIGHT}
 var START = Point{0, 0}
 var DEST = Point{0, 0}
@@ -58,7 +59,8 @@ func (p Point) AddDirection(dir Direction) Point {
 	return p
 }
 
-func printVisited() {
+func print() {
+	time.Sleep(time.Second / 150.)
 	minX := math.MaxInt32
 	minY := math.MaxInt32
 
@@ -83,76 +85,37 @@ func printVisited() {
 		}
 	}
 
-	out := ""
+	out := "\x1b[2;0H"
 	for i := minY - 4; i <= maxY; i++ {
 		for j := minX - 1; j <= maxX+5; j++ {
 			p := Point{i, j}
-			if visited[p] == true {
+			clr := 47
+			ch := "  "
+
+			if walls[p] == true {
+				clr = 40
+			} else if flooded[p] == true {
+				clr = 106
+			} else if visited[p] == true {
 				if p == START {
-					out += "S"
+					clr = 106
 				} else if p == DEST {
-					out += "D"
-				} else {
-					out += "x"
+					clr = 103
 				}
 			} else {
-				out += " "
+				clr = 40
 			}
+			out += fmt.Sprintf("\x1b[%dm%s", clr, string(ch))
 		}
-		out += "\n"
-	}
-
-	fmt.Println(out)
-}
-
-func printFlooded() {
-	minX := math.MaxInt32
-	minY := math.MaxInt32
-
-	maxX := math.MinInt32
-	maxY := math.MinInt32
-
-	for p := range flooded {
-		if p.x < minX {
-			minX = p.x
-		}
-
-		if p.x > maxX {
-			maxX = p.x
-		}
-
-		if p.y < minY {
-			minY = p.y
-		}
-
-		if p.y > maxY {
-			maxY = p.y
-		}
-	}
-
-	out := ""
-	for i := minY - 4; i <= maxY; i++ {
-		for j := minX - 1; j <= maxX+5; j++ {
-			p := Point{i, j}
-			if flooded[p] == true {
-				if p == START {
-					out += "S "
-				} else if p == DEST {
-					out += "D "
-				} else {
-					out += "o "
-				}
-			} else {
-				out += "  "
-			}
-		}
-		out += "\n"
+		out += fmt.Sprint("\x1b[0m\n")
 	}
 
 	fmt.Println(out)
 }
 
 func shortestPathToControl(ic *IntCode, point Point, count int) {
+	fmt.Printf("\x1b[H\x1b[Kcount=%d\n", count)
+	print()
 	visited[point] = true
 
 	for _, dir := range DIRECTIONS {
@@ -162,6 +125,7 @@ func shortestPathToControl(ic *IntCode, point Point, count int) {
 
 		switch int(out) {
 		case WALL:
+			walls[p] = true
 			break
 		case OPEN:
 			if visited[p] != true {
@@ -171,7 +135,6 @@ func shortestPathToControl(ic *IntCode, point Point, count int) {
 		case DESTINATION:
 			DEST = point
 			minutes := oxygenFlood(cp, p, 0)
-			printFlooded()
 			fmt.Printf("Minutes to flood: %d\n", minutes)
 			return
 		}
@@ -179,8 +142,9 @@ func shortestPathToControl(ic *IntCode, point Point, count int) {
 }
 
 func oxygenFlood(ic *IntCode, point Point, count int) int {
+	fmt.Printf("\x1b[H\x1b[Kcount=%d\n", count)
+	print()
 	flooded[point] = true
-	time.Sleep(time.Second / 1000.)
 
 	outputs := make([]int, 0)
 	for _, dir := range DIRECTIONS {
