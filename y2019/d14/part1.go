@@ -5,10 +5,14 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
 )
+
+var reactionMap = make(map[string][]Chemical, 0)
+var excess = make(map[string]int, 0)
 
 type Chemical struct {
 	amount int
@@ -18,27 +22,6 @@ type Chemical struct {
 type Reaction struct {
 	inputs []Chemical
 	output Chemical
-}
-
-type Queue struct {
-	arr []string
-}
-
-func (q *Queue) Enqueue(s string) {
-	q.arr = append(q.arr, s)
-}
-
-func (q *Queue) Dequeue() string {
-	temp := q.arr[0]
-	q.arr = q.arr[1:]
-	return temp
-}
-
-func (q *Queue) IsEmpty() bool {
-	if len(q.arr) == 0 {
-		return true
-	}
-	return false
 }
 
 func parseChemical(obj string) Chemical {
@@ -80,40 +63,30 @@ func parseReaction(line string) Reaction {
 	return r
 }
 
-// https://gitlab.com/FrankEndriss/aoc2019/blob/master/src/d14.cc
+func getOreCount(name string, amount int) int {
 
-func getOreCount(chemicalName string,
-	reactionMap map[string][]Chemical) int {
-	Q := &Queue{make([]string, 0)}
-
-	discovered := make(map[string]bool)
-	discovered["FUEL"] = true
-
-	Q.Enqueue("FUEL")
-
-	for !Q.IsEmpty() {
-		v := Q.Dequeue()
-
-		if len(discovered) == len(reactionMap) {
-			break
-		}
-
-		for _, c := range reactionMap[v][1:] {
-			fmt.Println(c)
-			discovered[c.name] = true
-			Q.Enqueue(c.name)
-		}
-
+	if name == "ORE" {
+		return amount
 	}
 
-	return 0
+	count := int(math.Min(float64(excess[name]), float64(amount)))
+	amount -= count
+	excess[name] -= count
+
+	sub := 0
+	for _, ingredient := range reactionMap[name][1:] {
+		sub += getOreCount(ingredient.name, 1)
+	}
+
+	fmt.Println(name, count, amount, sub)
+
+	return sub
 }
 
 func main() {
 	input := bufio.NewScanner(os.Stdin)
 
 	reactions := make([]Reaction, 0)
-	reactionMap := make(map[string][]Chemical, 0)
 
 	for input.Scan() {
 		line := input.Text()
@@ -128,5 +101,5 @@ func main() {
 		)
 	}
 
-	fmt.Println(getOreCount("FUEL", reactionMap))
+	fmt.Println(getOreCount("FUEL", 1))
 }
