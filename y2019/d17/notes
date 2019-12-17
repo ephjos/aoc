@@ -1,0 +1,48 @@
+R6				x
+L10				x
+R8				x
+R8				x
+R12				x
+L8				x
+L8				x
+R6				x
+L10				x
+R8				x
+R8				x
+R12				x
+L8				x
+L8				x
+L10				x
+R6				x
+R6				x
+L8				x
+R6				x
+L10				x
+R8				x
+R8				x
+R12				x
+L8				x
+L8				x
+L10				x
+R6				x
+R6				x
+L8				x
+R6				x
+L10				x
+R8				x
+L10				x
+R6				x
+R6				x
+L8				x
+
+Main: A B A B C A B C A C
+A: R6 L10 R8
+	 R,6,L,10,R,8
+B: R8 R12 L8 L8
+	 R,8,R,12,L,8,L,8
+C: L10 R6 R6 L8
+	 L,10,R,6,R,6,L,8
+
+
+
+
