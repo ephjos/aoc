@@ -97,13 +97,41 @@ func traverseScaffold(ic *IntCode) {
 		ic.AddInput(NEWLINE)
 	}
 
+	last := -1
 	var output int64
+	answer := 0
 
+	fmt.Print("\x1b[2;0H")
 	for ic.IsRunning {
 		output = ic.Run()
-		fmt.Println(output)
+		if output > 300 {
+			answer = output
+		}
 
+		clr := 40
+		ch := string(output) + ""
+		ch = "  "
+
+		switch output {
+		case SCAFFOLD:
+			clr = 46
+		case SPACE:
+			clr = 40
+		default:
+			clr = 103
+		}
+
+		fmt.Print("\x1b[%dm%s", clr, string(ch))
+
+		if output == NEWLINE && last == NEWLINE {
+			fmt.Print("\x1b[0m\n")
+			fmt.Print("\x1b[2;0H")
+		}
+		last = output
 	}
+	fmt.Print("\x1b[0m\n")
+
+	fmt.Printf("Dust collected: %d\n", answer)
 }
 
 func main() {
