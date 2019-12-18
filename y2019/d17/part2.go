@@ -18,6 +18,8 @@ const (
 	SCAFFOLD = 35
 	SPACE    = 46
 	NEWLINE  = 10
+
+	COMMA = 44
 )
 
 func print(viewMap map[Point]rune) {
@@ -47,13 +49,16 @@ func print(viewMap map[Point]rune) {
 	}
 
 	out := "\x1b[2;0H"
+	//out := ""
 	for i := minY; i < maxY-1; i++ {
 		for j := minX; j < maxX; j++ {
 			p := Point{j, i}
 			r := viewMap[p]
 
 			clr := 40
-			ch := "  "
+			clr = clr
+			ch := string(r) + ""
+			ch = ch
 
 			switch r {
 			case SCAFFOLD:
@@ -65,46 +70,40 @@ func print(viewMap map[Point]rune) {
 			}
 
 			out += fmt.Sprintf("\x1b[%dm%s", clr, string(ch))
+			//out += string(r)
 		}
 		out += fmt.Sprint("\x1b[0m\n")
+		//out += "\n"
 	}
 
 	fmt.Println(out)
 }
 
-func parseView(ic *IntCode) map[Point]rune {
-	var viewMap = make(map[Point]rune, 0)
+func traverseScaffold(ic *IntCode) {
+	//o := 48
+	main := "A,B,A,B,C,A,B,C,A,C"
+	a := "R,6,L,10,R,8"
+	b := "R,8,R,12,L,8,L,8"
+	c := "L,10,R,6,R,6,L,8"
+	stream := "y"
+	inputs := []string{main, a, b, c, stream}
 
-	var point = Point{0, 0}
+	ic.Data[0] = 2
 
-	for ic.IsRunning {
-		out := ic.Run(0)
-
-		viewMap[point] = rune(out)
-
-		if out == NEWLINE {
-			point.x = 0
-			point.y++
-		} else {
-			point.x++
+	for _, input := range inputs {
+		for _, char := range input {
+			ic.AddInput(int(char))
 		}
+		ic.AddInput(NEWLINE)
 	}
 
-	return viewMap
-}
+	var output int64
 
-func traverseScaffold(viewMap map[Point]rune) {
-	o := 48
-	main := []rune{'A', 'B', 'A', 'B', 'C', 'A', 'B', 'C', 'A', 'C'}
-	a := []rune{'R', rune(6 + o), 'L', rune(10 + o), 'R', rune(8 + o)}
-	b := []rune{'R', rune(8 + o), 'R', rune(12 + o), 'L', rune(8 + o), 'L', rune(8 + o)}
-	c := []rune{'L', rune(10 + o), 'R', rune(6 + o), 'R', rune(6 + o), 'L', rune(8 + o)}
+	for ic.IsRunning {
+		output = ic.Run()
+		fmt.Println(output)
 
-	fmt.Println(main)
-	fmt.Println(a)
-	fmt.Println(b)
-	fmt.Println(c)
-
+	}
 }
 
 func main() {
@@ -115,8 +114,6 @@ func main() {
 
 	ic := NewIntCode(tokens)
 
-	viewMap := parseView(ic)
-	print(viewMap)
-	traverseScaffold(viewMap)
+	traverseScaffold(ic)
 
 }

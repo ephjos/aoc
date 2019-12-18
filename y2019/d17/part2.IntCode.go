@@ -32,11 +32,31 @@ const (
 	MODE_RELATIVE  int64 = 2
 )
 
+type Queue struct {
+	data []int
+}
+
+func NewQueue() *Queue {
+	return &Queue{[]int{}}
+}
+
+func (s *Queue) Push(i int) {
+	s.data = append(s.data, i)
+	return
+}
+
+func (s *Queue) Pop() int {
+	temp := s.data[0]
+	s.data = s.data[1:]
+	return temp
+}
+
 type IntCode struct {
 	Data      []int64
 	IP        int64
 	RelBase   int64
 	IsRunning bool
+	Inputs    *Queue
 }
 
 func (ic *IntCode) Copy() *IntCode {
@@ -97,7 +117,12 @@ func (ic *IntCode) write(dest, value int64) {
 	ic.Data[dest] = value
 }
 
-func (ic *IntCode) Run(inp int) int64 {
+func (ic *IntCode) AddInput(i int) {
+	ic.Inputs.Push(i)
+	return
+}
+
+func (ic *IntCode) Run() int64 {
 	for {
 		i := ic.IP
 		opcode, m1, m2, m3 := parseOpCode(ic.Data[i])
@@ -138,7 +163,7 @@ func (ic *IntCode) Run(inp int) int64 {
 			p1 := ic.Data[i+1]
 			v1 := ic.getValue(opcode, m1, 1, p1)
 
-			ic.write(v1, int64(inp))
+			ic.write(v1, int64(ic.Inputs.Pop()))
 
 			ic.IP += 2
 			break
@@ -236,5 +261,6 @@ func NewIntCode(rawData []string) *IntCode {
 		IP:        int64(0),
 		RelBase:   int64(0),
 		IsRunning: true,
+		Inputs:    NewQueue(),
 	}
 }
