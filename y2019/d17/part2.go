@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"os/exec"
 	"strings"
+	"time"
 )
 
 type Point struct {
@@ -20,6 +22,10 @@ const (
 	NEWLINE  = 10
 
 	COMMA = 44
+	A1    = int64('^')
+	A2    = int64('v')
+	A3    = int64('<')
+	A4    = int64('>')
 )
 
 func print(viewMap map[Point]rune) {
@@ -105,11 +111,11 @@ func traverseScaffold(ic *IntCode) {
 	for ic.IsRunning {
 		output = ic.Run()
 		if output > 300 {
-			answer = output
+			answer = int(output)
 		}
 
 		clr := 40
-		ch := string(output) + ""
+		ch := string(output) + " "
 		ch = "  "
 
 		switch output {
@@ -117,19 +123,27 @@ func traverseScaffold(ic *IntCode) {
 			clr = 46
 		case SPACE:
 			clr = 40
-		default:
+		case A1, A2, A3, A4:
 			clr = 103
 		}
 
-		fmt.Print("\x1b[%dm%s", clr, string(ch))
+		if output == NEWLINE {
+			fmt.Printf("\x1b[%dm%s", clr, string(NEWLINE))
+		} else {
+			fmt.Printf("\x1b[%dm%s", clr, string(ch))
+		}
 
 		if output == NEWLINE && last == NEWLINE {
+			time.Sleep(time.Second / 100.)
 			fmt.Print("\x1b[0m\n")
 			fmt.Print("\x1b[2;0H")
 		}
-		last = output
+		last = int(output)
 	}
 	fmt.Print("\x1b[0m\n")
+	cc := exec.Command("clear")
+	cc.Stdout = os.Stdout
+	cc.Run()
 
 	fmt.Printf("Dust collected: %d\n", answer)
 }
