@@ -3,11 +3,11 @@
 
 p1:
 	clear
-	go run part1.go < input | tee out1
+	go run part1.go < input
 
 p2:
 	clear
-	go run part2.go < input | tee out2
+	go run part2.go < input2
 
 clean:
 	rm -rf out*

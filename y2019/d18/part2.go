@@ -12,7 +12,12 @@ import (
 )
 
 var maze = make(map[Point]string, 0)
-var startPoint = Point{0, 0}
+var startPoints = []Point{
+	Point{39, 39},
+	Point{39, 41},
+	Point{41, 41},
+	Point{41, 39},
+}
 var ALL_KEYS = make([]string, 0)
 
 type Point struct {
@@ -131,7 +136,6 @@ func parseMap(strings []string) map[Point]string {
 		for _, c := range str {
 
 			if string(c) == PLAYER {
-				startPoint = currPoint
 				m[currPoint] = OPEN
 			} else {
 				m[currPoint] = string(c)
@@ -146,6 +150,8 @@ func parseMap(strings []string) map[Point]string {
 		currPoint.x = 0
 		currPoint.y++
 	}
+
+	sort.Strings(ALL_KEYS)
 
 	return m
 }
@@ -202,7 +208,7 @@ func GetNeighbors(point Point) []Point {
 	}
 }
 
-func DFS() (Point, int) {
+func BFS(startPoint Point, allKeys []XYKeys) (Point, int) {
 
 	// Initialize dist map, track distance to each
 	// XYKeys object
@@ -230,7 +236,7 @@ func DFS() (Point, int) {
 
 		// If we have all of the keys,
 		// return the current point and distance to it
-		if len(ukeys) == len(ALL_KEYS) {
+		if len(ukeys) == len(allKeys) {
 			return u.point, dist[u.Hash()]
 		}
 
@@ -238,11 +244,13 @@ func DFS() (Point, int) {
 		udist := dist[u.Hash()]
 
 		//print(maze, u)
-		fmt.Println("\x1b[2;0H")
-		fmt.Println("All keys:", ALL_KEYS)
-		fmt.Println("Current point + keys:", u)
-		fmt.Println("Current distance:", udist)
-		fmt.Println("\x1b[0m\n")
+		//fmt.Println("\x1b[2;0H")
+		/*
+			fmt.Println("All keys:", ALL_KEYS)
+			fmt.Println("Current point + keys:", u)
+			fmt.Println("Current distance:", udist)
+		*/
+		//fmt.Println("\x1b[0m\n")
 		//time.Sleep(time.Second / 100.)
 
 		// For each neighbor (U,D,L,R)
@@ -293,6 +301,54 @@ func DFS() (Point, int) {
 	return startPoint, -1
 }
 
+func reachable(point Point, visited map[Point]bool) []XYKeys {
+	keys := make([]XYKeys, 0)
+	if visited[point] == true {
+		return keys
+	}
+
+	visited[point] = true
+
+	for _, nb := range GetNeighbors(point) {
+		char := maze[nb]
+
+		if char == WALL {
+			continue
+		}
+
+		if char != OPEN {
+			if char == strings.ToUpper(char) {
+				maze[nb] = OPEN
+				keys = append(keys, reachable(nb, visited)...)
+			}
+
+			if char == strings.ToLower(char) {
+				xyk := NewXYKeys(nb)
+				xyk.AddKey(char)
+				keys = append(keys, *xyk)
+				keys = append(keys, reachable(nb, visited)...)
+			}
+		} else {
+			keys = append(keys, reachable(nb, visited)...)
+		}
+	}
+
+	out := make([]XYKeys, 0)
+
+outerLoop:
+	for _, k1 := range keys {
+		for _, k2 := range out {
+			if k1.point == k2.point {
+				continue outerLoop
+			}
+		}
+
+		out = append(out, k1)
+	}
+
+	return out
+}
+
 func main() {
 	input := bufio.NewScanner(os.Stdin)
 	strings := make([]string, 0)
@@ -305,6 +361,19 @@ func main() {
 	maze = parseMap(strings)
 
 	fmt.Println()
-	fmt.Println(DFS())
+
+	keys := make([][]XYKeys, 4)
+	for i, point := range startPoints {
+		out := reachable(point, make(map[Point]bool))
+		keys[i] = out
+	}
+
+	total := 0
+	for i, point := range startPoints {
+		_, dist := BFS(point, keys[i])
+		total += dist
+	}
+
+	fmt.Println(total)
 
 }

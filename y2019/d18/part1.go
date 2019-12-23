@@ -202,7 +202,7 @@ func GetNeighbors(point Point) []Point {
 	}
 }
 
-func DFS() (Point, int) {
+func BFS() (Point, int) {
 
 	// Initialize dist map, track distance to each
 	// XYKeys object
@@ -305,6 +305,6 @@ func main() {
 	maze = parseMap(strings)
 
 	fmt.Println()
-	fmt.Println(DFS())
+	fmt.Println(BFS())
 
 }
