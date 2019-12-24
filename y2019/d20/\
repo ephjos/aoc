@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"time"
 )
 
 type Point struct {
@@ -281,59 +282,26 @@ func getPortal(m Map, point Point, dir int) string {
 	panic("Couldn't get portal")
 }
 
-func jumpPortal(m Map, portal string, currPoint Point) Point {
-	c1 := string(portal[0])
-	c2 := string(portal[1])
+func jumpPortal(m Map, portal string, currPoint Point) Point{
+	c1 := portal[0]
+	c2 := portal[2]
 
-	for p, v := range m.view {
-		if p == currPoint {
-			continue
-		}
-
+	for p,v := range m.view {
 		if v == c1 {
-			// Check below
-			tp := Point{p.x, p.y}
+			tp := Point{p.x,p.y}
 			tp.y++
 
-			if tp == currPoint {
-				continue
-			}
-
 			if m.view[tp] == c2 {
-				// Is open space to the top or bottom
-				p1 := Point{tp.x, tp.y + 1}
-				if m.view[p1] == OPEN {
-					return p1
-				}
-
-				p2 := Point{p.x, p.y - 1}
-				if m.view[p2] == OPEN {
-					return p2
-				}
-
+				return Point{tp.x,tp.y+1}
 			}
 
-			// Check right
-			tp = Point{p.x, p.y}
+			tp = Point{p.x,p.y}
 			tp.x++
 
-			if tp == currPoint {
-				continue
-			}
-
 			if m.view[tp] == c2 {
-				// Is open space to the right or left
-				p1 := Point{tp.x + 1, tp.y}
-				if m.view[p1] == OPEN {
-					return p1
-				}
-
-				p2 := Point{p.x - 1, p.y}
-				if m.view[p2] == OPEN {
-					return p2
-				}
-
+				return Point{tp.x+1,tp.y}
 			}
+		}
 		}
 	}
 
@@ -366,11 +334,9 @@ func BFS(m Map) int {
 		// Get known distance for current Point
 		udist := dist[*u]
 
-		/*
-			m.player = *u
-			drawMap(m)
-			time.Sleep(time.Second / 500.)
-		*/
+		m.player = *u
+		drawMap(m)
+		time.Sleep(time.Second / 1.)
 
 		// For each neighbor (U,D,L,R)
 		for _, dir := range DIRS {
@@ -384,6 +350,13 @@ func BFS(m Map) int {
 				continue
 			}
 
+			// TODO: PORTAL LOGIC
+			if IsCapitalLetter(char) {
+				portal := getPortal(m, v, dir)
+				fmt.Println("PORTAL:", portal)
+				v = jumpPortal(m, portal, v)
+			}
+
 			// If nb is a wall, do nothing
 			if char == WALL ||
 				char == EMPTY {
@@ -393,12 +366,7 @@ func BFS(m Map) int {
 			// At end, return
 			if v == m.end[0] ||
 				v == m.end[1] {
-				return dist[*u]
-			}
-
-			if IsCapitalLetter(char) {
-				portal := getPortal(m, v, dir)
-				v = jumpPortal(m, portal, v)
+				return dist[*u] + 1
 			}
 
 			// If we have a distance record already,
@@ -409,6 +377,7 @@ func BFS(m Map) int {
 
 			// Otherwise, update distance and add to queue
 			dist[v] = udist + 1
+			//q.EnqueueS(v, dist)
 			q.Enqueue(&v)
 		}
 
