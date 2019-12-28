@@ -2,10 +2,12 @@
 .PHONY: p1 p2 clean
 
 p1:
-	go run part1.go < input | tee out1
+	clear
+	go run part1.* < input
 
 p2:
-	go run part2.go < input | tee out2
+	clear
+	go run part2.* < input
 
 clean:
 	rm -rf out*
