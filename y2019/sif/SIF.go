@@ -204,8 +204,19 @@ func (s *SIF) Visualize() {
 		}
 
 		index := 0
+		pause := false
 
 		for !win.Closed() {
+			if win.JustPressed(pixelgl.KeyR) {
+				index = 0
+			}
+			if win.JustPressed(pixelgl.KeySpace) {
+				pause = !pause
+			}
+			if pause {
+				win.Update()
+				continue
+			}
 			// Show next image from images array
 			if index < len(images) {
 				pic := pixel.PictureDataFromImage(images[index])
