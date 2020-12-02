@@ -8,19 +8,6 @@ void ehandler(char* s, int exit_code)
 	exit(exit_code);
 }
 
-long num_lines(FILE* fp)
-{
-	long count = 0;
-	char buf[128] = {0};
-	fseek(fp, 0, 0);
-	for (; fscanf(fp,"%s\n", buf) == 1; ) {
-		count++;
-  }
-
-	fseek(fp, 0, 0);
-	return count;
-}
-
 int main(int argc, char *argv[])
 {
 	FILE* fp = fopen("./input", "r");
