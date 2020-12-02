@@ -1,4 +1,4 @@
-module github.com/josephthomashines/aoc
+module github.com/ephjos/aoc
 
 go 1.13
 

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/josephthomashines/aoc/y2019/sif"
+	"github.com/ephjos/aoc/y2019/sif"
 )
 
 func main() {
