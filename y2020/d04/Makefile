@@ -1,5 +1,5 @@
 
-CC = gcc -g -lX11
+CC = gcc -g
 objects = part1 part2
 
 .PHONY: all

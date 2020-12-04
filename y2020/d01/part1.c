@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../include/cfx.h"
+
 void ehandler(char* s, int exit_code)
 {
 	fprintf(stderr, "%s\n", s);
