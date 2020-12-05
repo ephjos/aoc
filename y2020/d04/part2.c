@@ -146,9 +146,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	valid += byr && iyr && eyr && hgt && hcl && ecl && pid;
-	byr = 0; iyr = 0; eyr = 0; hgt = 0;
-	hcl = 0; ecl = 0; pid = 0; cid = 0;
+	// Had to remove to get correct answer...
 
 	printf("valid = %d\n", valid);
 

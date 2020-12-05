@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	// Need this to get correct answer...
 	valid += byr && iyr && eyr && hgt && hcl && ecl && pid;
 	byr = 0; iyr = 0; eyr = 0; hgt = 0;
 	hcl = 0; ecl = 0; pid = 0; cid = 0;
