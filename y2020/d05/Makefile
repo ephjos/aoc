@@ -11,6 +11,11 @@ clean:
 $(objects): %: %.c
 	$(CC) -o $@ $<
 
+.PHONY: vis
+vis:
+	$(CC) -lX11 -lm -lavdevice -lavformat -lavfilter -lavcodec -lswresample \
+		-lswscale -lavutil -o vis vis.c
+
 
 
 
