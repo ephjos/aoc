@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 		char** toks = split(lines[i], " ", &m);
 		root_name = cat2(toks[0], toks[1]);
 		if (strcmp(toks[4], "no") == 0) {
-			free2d((void**)toks, m);
+			ffree((void**)toks, m);
 			free(root_name);
 			continue;
 		}
@@ -147,13 +147,13 @@ int main(int argc, char *argv[])
 			add_bag(b, atoi(toks[j]), cat2(toks[j+1], toks[j+2]));
 		}
 		insert_bag_ht(bht, root_name, b);
-		free2d((void**)toks, m);
+		ffree((void**)toks, m);
 	}
 
 	DUMP("%d", required_bags(bht, "shinygold"));
 
 	free_bag_ht(bht);
-	free2d((void**)lines, n);
+	ffree((void**)lines, n);
 
 	return 0;
 }

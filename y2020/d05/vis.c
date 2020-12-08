@@ -3,7 +3,7 @@
 #include "../include/cge.h"
 #include "../include/cfx.h"
 
-void draw_de_seats_on_de_plane(int px, int py, int** ss)
+void draw_seats(int px, int py, int** ss)
 {
 	int w = 10, h = 10;
 	for (int i = 0; i < 8; i++) {
@@ -54,8 +54,8 @@ int main()
 	int x,y;
 
 	// Open a new window for drawing.
-	cfx_open(xsize, ysize, 60, "vis.mp4");
-	//cfx_open(xsize, ysize, 60, NULL);
+	//cfx_open(xsize, ysize, 60, "vis.mp4");
+	cfx_open(xsize, ysize, 60, NULL);
 
 	int i = 0;
 	int** ss = (int**)calloc(1, sizeof(int*)*8);
@@ -90,7 +90,7 @@ int main()
 			cfx_draw_rectangle(10+(fr*10), py+(fc*10), 10, 10, 1);
 		}
 
-		draw_de_seats_on_de_plane(10, 30, ss);
+		draw_seats(10, 30, ss);
 		cfx_color(200, 200, 200);
 		cfx_draw_text(100, 20, buf);
 
@@ -113,6 +113,9 @@ int main()
 	}
 
 	// Cleanup
+	ffree((void**)ss, 8);
+	ffree((void**)lines, n);
+	free(ids);
 	cfx_free();
 
 	return 0;

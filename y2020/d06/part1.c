@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	DUMP("%d", tsum);
 
 	// Cleanup
-	free2d((void**)lines, n);
+	ffree((void**)lines, n);
 
 	return 0;
 }
