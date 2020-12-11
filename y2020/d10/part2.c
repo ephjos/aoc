@@ -18,9 +18,9 @@ int comp_long(const void* a, const void* b)
 	return (*(long*)a) > (*(long*)b);
 }
 
-long tribonacci(int n)
+unsigned long tribonacci(int n)
 {
-	if (n <= 0) return 0;
+	if (n == 0) return 0;
 	if (n == 1) return 1;
 	if (n == 2) return 1;
 	return tribonacci(n-1) + tribonacci(n-2) + tribonacci(n-3);
@@ -33,23 +33,16 @@ long count_ways(long* nums, int n)
 		diff[i] = nums[i+1] - nums[i];
 	}
 
-	long s = 1;
+	unsigned long s = 1;
 	int a = -1;
 	for (int i = 0; i < n+1; i++) {
 		if (diff[i] == 3) {
-			if (a != i && i-a != 1) {
-				printf("%6d ", i-a);
+			if (i-a != 1) {
 				s *= tribonacci(i-a);
-			} else {
-				printf("       ");
 			}
 			a = i;
-		} else {
-			printf("       ");
 		}
-		printf("%8ld %8ld\n", nums[i], diff[i]);
 	}
-	printf("\n");
 
 	free(diff);
 	return s;
@@ -72,8 +65,8 @@ int main(int argc, char *argv[])
 		DUMP("%5ld", nums[i]);
 	}
 
-	int res = count_ways(nums, n);
-	DUMP("%d", res);
+	unsigned long res = count_ways(nums, n);
+	DUMP("%lu", res);
 
 	free(nums);
 	free(numsff);

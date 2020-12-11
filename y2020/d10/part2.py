@@ -26,8 +26,11 @@ def main():
         print(rr_diffs)
 
         r = 1
-        for rr in [trib(x) for x in rr_diffs]:
-            r *= rr
+        ts = [trib(x) for x in rr_diffs]
+        print(ts)
+        for t in ts:
+            r *= t
+            print(r)
 
         print(r)
 
