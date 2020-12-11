@@ -128,14 +128,16 @@ char** step_state(char** s, int n)
 			if (s[i][j] == FLOOR) {
 				ns[i][j] = s[i][j]; continue;
 			}
-			adj = ((i > 0 && s[i-1][j] == OCC) +
-						 (i > 0 && j > 0 && s[i-1][j-1] == OCC) +
-						 (i > 0 && j < l-1 && s[i-1][j+1] == OCC) +
-						 (i < n-1 && s[i+1][j] == OCC) +
-						 (i < n-1 && j > 0 && s[i+1][j-1] == OCC) +
-						 (i < n-1 && j < l-1 && s[i+1][j+1] == OCC) +
-						 (j > 0 && s[i][j-1] == OCC) +
-						 (j < l-1 && s[i][j+1] == OCC));
+
+			// Count adjacent occupied chairs (cardinal directions)
+			adj = ((i > 0 &&                 s[i-1][j]    == OCC) + // N
+						 (i > 0 &&    j > 0 &&     s[i-1][j-1]  == OCC) + // NW
+						 (i > 0 &&    j < l-1 &&   s[i-1][j+1]  == OCC) + // NE
+						 (i < n-1 &&               s[i+1][j]    == OCC) + // S
+						 (i < n-1 &&  j > 0 &&     s[i+1][j-1]  == OCC) + // SW
+						 (i < n-1 &&  j < l-1 &&   s[i+1][j+1]  == OCC) + // SE
+						 (            j > 0 &&     s[i][j-1]    == OCC) + // W
+						 (            j < l-1 &&   s[i][j+1]    == OCC)); // E
 
 			if (s[i][j] == EMPTY && adj == 0) {
 				ns[i][j] = OCC;
