@@ -128,7 +128,6 @@ char** step_state(char** s, int n)
 			if (s[i][j] == FLOOR) {
 				ns[i][j] = s[i][j]; continue;
 			}
-			adj = 0;
 			adj = ((i > 0 && s[i-1][j] == OCC) +
 						 (i > 0 && j > 0 && s[i-1][j-1] == OCC) +
 						 (i > 0 && j < l-1 && s[i-1][j+1] == OCC) +
