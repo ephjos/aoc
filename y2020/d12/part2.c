@@ -7,7 +7,7 @@
 
 typedef struct vec2_t vec2;
 typedef struct vec2_t {
-	long double x, y;
+	double x, y;
 } vec2;
 
 typedef struct boat_t boat;
@@ -47,8 +47,8 @@ double deg2rad(int deg)
 void rotate_vec2(vec2* v, int deg)
 {
 	double rad = deg2rad(deg);
-	long double nx = (cos(rad)*v->x) - (sin(rad)*v->y);
-	long double ny = (sin(rad)*v->x) + (cos(rad)*v->y);
+	double nx = (cos(rad)*v->x) - (sin(rad)*v->y);
+	double ny = (sin(rad)*v->x) + (cos(rad)*v->y);
 	v->x = nx; v->y = ny;
 	return;
 }
@@ -59,7 +59,7 @@ void addi_vec2(vec2* dest, vec2* src)
 	return;
 }
 
-vec2* scale_vec2(vec2* v,  long double s)
+vec2* scale_vec2(vec2* v,  double s)
 {
 	vec2* r = init_vec2();
 	r->x = v->x*s; r->y = v->y*s;
@@ -73,7 +73,7 @@ vec2* sub_vec2(vec2* a, vec2* b)
 	return r;
 }
 
-long double l1_vec2(vec2* v)
+double l1_vec2(vec2* v)
 {
 	return ABS(v->x) + ABS(v->y);
 }
@@ -126,12 +126,11 @@ int main(int argc, char *argv[])
 			default:
 				break;
 		}
-		printf("%c %6d (%6Le, %6Le) (%6Le, %6Le)\n",
+		printf("%c %6d (%2f, %2f) (%2f, %2f)\n",
 				c, v, wp->x, wp->y, b->x, b->y);
 	}
 
-	printf("dist = %8Le\n", l1_vec2(b));
-	printf("dist = %8ld\n", (long)l1_vec2(b));
+	printf("dist = %2f\n", l1_vec2(b));
 
 	free(wp);
 	free(b);
