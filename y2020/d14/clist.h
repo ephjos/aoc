@@ -25,8 +25,8 @@ inline void clist_error(char* s)
 #define DefineListFor(type, print_type, zero_val) \
 typedef struct type##_list_t { \
 	type* data; \
-	int size; \
-	int cap; \
+	long size; \
+	long cap; \
 } type##_list; \
 type##_list* new_##type##_list(int cap); \
 inline type##_list* new_##type##_list(int cap) \
@@ -69,7 +69,7 @@ inline void set_##type##_list(type##_list* dlist, int i, type x) \
 			dlist->data[j] = zero_val; \
 		} \
 	} \
-	int ig = i > dlist->size; \
+	int ig = i >= dlist->size; \
 	dlist->size = (ig*(i+1)) + (!ig*dlist->size); \
 	dlist->data[i] = x; \
 } \
@@ -83,11 +83,11 @@ inline type get_##type##_list(type##_list* dlist, int i) \
 	char msg[256] = {0}; \
 	sprintf( \
 			msg, \
-			"Access to index %d is out of bounds for list of size %d", \
+			"Access to index %d is out of bounds for list of size %ld", \
 			i, \
 			dlist->size); \
 	clist_error(msg); \
-	return -1; \
+	return zero_val; \
 } \
 void free_##type##_list(type##_list* dlist); \
 inline void free_##type##_list(type##_list* dlist) \

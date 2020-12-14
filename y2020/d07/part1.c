@@ -4,7 +4,7 @@
 
 #include "cge.h"
 
-#define HT_SIZE 655212
+#define HT_SIZE 1<<16
 #define HOLDS 512
 
 typedef struct bag_t {
