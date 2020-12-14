@@ -17,6 +17,6 @@ int main(int argc, char *argv[])
 		lines = load_file("./input", 0, &n);
 	}
 
-	ffree((void**)lines, n);
+	FFREE(lines, n);
 	return 0;
 }
