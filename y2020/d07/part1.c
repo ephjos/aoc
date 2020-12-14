@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/cge.h"
+#include "cge.h"
 
 #define HT_SIZE 655212
 #define HOLDS 512

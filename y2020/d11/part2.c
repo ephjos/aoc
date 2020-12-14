@@ -5,7 +5,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "../include/cge.h"
+#include "cge.h"
 
 #define TEST 0
 #if TEST

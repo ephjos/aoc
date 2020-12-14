@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/cge.h"
+#include "cge.h"
 
 typedef struct vec2_t vec2;
 typedef struct vec2_t {

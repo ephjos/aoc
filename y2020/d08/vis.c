@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/cfx.h"
-#include "../include/cge.h"
+#include "cfx.h"
+#include "cge.h"
 
 #define WIDTH 550
 #define HEIGHT 570

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/cge.h"
+#include "cge.h"
 
 long long modinv(long long a, long long b)
 {

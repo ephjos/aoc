@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/cge.h"
+#include "cge.h"
 
 enum opcode{ NOP, ACC, JMP};
 

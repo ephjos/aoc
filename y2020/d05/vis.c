@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "../include/cge.h"
-#include "../include/cfx.h"
+#include "cge.h"
+#include "cfx.h"
 
 void draw_seats(int px, int py, int** ss)
 {
