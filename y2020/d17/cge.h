@@ -133,7 +133,8 @@ inline char**
 split(char* s, char* delim, int* return_ntoks)
 {
 	char** toks = (char**)malloc(sizeof(char*));
-	char* p = strtok(s, delim);
+	char* sp = strdup(s);
+	char* p = strtok(sp, delim);
 	int i = 0;
 
 	while (p != NULL) {
