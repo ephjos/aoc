@@ -38,6 +38,9 @@ def parse(line, i=0):
     i, val = parse_exprp(line, i, val)
     return i, val
 
+# instead of changing parser to use a stack,
+# enforce new precedence rules by inserting parenthesis around addition
+# operations
 def insert_parens(line):
     i = 0
     while i < len(line):
@@ -72,7 +75,6 @@ def insert_parens(line):
                         i += 2
                         break
                 j += 1
-        #print(''.join(line))
         i += 1
     return line
 
