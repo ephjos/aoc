@@ -1,11 +1,15 @@
 #!/bin/bash
 
 if [ -z "${1}" ]; then
+  echo "Need to specify template {c, python}"
+  exit 0
+fi
+
+if [ -z "${2}" ]; then
   echo "Need to specify the target directory of form 'd00'"
   exit 0
 fi
 
-cp -r template/ "$1"
-cp ~/repos/cut/cge/cge.h "$1"
+cp -r "$1" "$2"
 
-aoc_input "-$1" | tee "$1/input"
+aoc_input "-$2" | tee "$2/input"
