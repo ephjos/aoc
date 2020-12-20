@@ -3,7 +3,7 @@ import argparse
 
 def main(fn):
     with open(fn, 'r') as fp:
-        for line in [l.strip() in for l in fp]:
+        for line in [l.strip() for l in fp]:
             print(line)
 
 if __name__ == "__main__":
