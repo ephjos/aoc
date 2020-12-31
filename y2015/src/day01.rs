@@ -33,7 +33,7 @@ fn b(s: &String) {
 }
 
 pub fn run () {
-    let s = fs::read_to_string("./input/day1.txt")
+    let s = fs::read_to_string("./input/day01.txt")
         .expect("Could not read input");
 
     a(&s);

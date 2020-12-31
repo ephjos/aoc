@@ -1,7 +1,7 @@
 
-pub fn a () {}
+fn a () {}
 
-pub fn b () {}
+fn b () {}
 
 pub fn run () {
     a();
