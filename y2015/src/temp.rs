@@ -1,9 +1,10 @@
+use std::fs;
 
 fn a () {}
 
 fn b () {}
 
 pub fn run () {
-    a();
-    b();
+    let content = fs::read_to_string("./input/dayNN.txt")
+        .expect("Could not open input");
 }
