@@ -5,53 +5,85 @@ extern crate crypto;
 use crypto::md5::Md5;
 use crypto::digest::Digest;
 
-fn finder(s: &str, n: usize, start: u64, end: u64) -> Option<u64> {
+//
+// Refinements from:
+//   https://gist.github.com/coriolinus/f94748a0d232d32e4eb1
+//
+//   Using channels saves ~0.2s
+//
+
+enum Cmd {
+    Chunk(u64, u64),
+}
+
+fn finder(
+    s: &str, n: usize,
+    res_tx: mpsc::Sender<(mpsc::Sender<Cmd>, Option<u64>)>) {
+
+    let (cmd_tx, cmd_rx) = mpsc::channel();
+
+    res_tx.send((cmd_tx.clone(), None)).unwrap();
+
+    let mut start;
+    let mut end;
     let s = s.trim();
-    let mut i: u64 = start;
     let mut md5 = Md5::new();
 
     loop {
-        md5.input_str(s);
-        md5.input_str(&i.to_string());
-        let dig = md5.result_str();
-        md5.reset();
-
-        if dig.chars().take(n).all(|c| c == '0') {
-            return Some(i);
-        }
-        if i >= end { break; }
-        i += 1;
-    }
-
-    return None;
-}
-
-fn find_ith_suffix(s: &str, n: usize) -> u64 {
-    let chunk = 1<<14;
-    let procs = 4;
-
-    let mut res: u64 = std::u64::MAX;
-    let mut done: bool = false;
-
-    let mut chunk_iter = (0..).map(|x| x*chunk).take_while(|x| x < &std::u64::MAX);
-
-    loop {
-        let mut children = vec![];
-        for _ in 0..procs {
-            let s = s.to_owned();
-            let b = chunk_iter.next().unwrap();
-            children.push(thread::spawn(move ||
-                    finder(&s, n, b, b+chunk)));
+        match cmd_rx.recv().unwrap() {
+            Cmd::Chunk(a,b) => {
+                start = a;
+                end = b;
+            },
         }
 
-        for child in children.into_iter() {
-            if let Some(x) = &child.join().unwrap() {
-                res = res.min(*x);
-                done = true;
+        for i in start..end {
+            md5.input_str(s);
+            md5.input_str(&i.to_string());
+            let dig = md5.result_str();
+            md5.reset();
+
+            if dig.chars().take(n).all(|c| c == '0') {
+                res_tx.send((cmd_tx.clone(), Some(i))).unwrap();
             }
         }
 
-        if done { break; }
+        match res_tx.send((cmd_tx.clone(), None)) {
+            _ => (),
+        }
+    }
+}
+
+fn find_ith_suffix(s: &str, n: usize) -> u64 {
+    let chunk = 1<<12;
+    let threads = 8;
+
+    let mut res: u64 = 0;
+    let chunk_iter = (0..).map(|x| (x*chunk, (x+1)*chunk));
+    let (res_tx, res_rx) = mpsc::channel();
+
+    for _ in 0..threads {
+        let s = s.to_owned();
+        let res_tx = res_tx.clone();
+        thread::spawn(move ||
+                finder(&s, n, res_tx));
+    }
+
+    for chunk in chunk_iter {
+        let (cmd_tx, val) = res_rx.recv().unwrap();
+
+        if let Some(x) = val {
+            res = x;
+            for _ in 1..threads {
+                let (_, val) = res_rx.recv().unwrap();
+                if let Some(y) = val {
+                    res = res.min(y);
+                }
+            }
+            break;
+        } else {
+            cmd_tx.send(Cmd::Chunk(chunk.0, chunk.1)).unwrap();
+        }
     }
 
     return res;
