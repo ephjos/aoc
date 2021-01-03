@@ -89,10 +89,9 @@ fn find_ith_suffix(s: &str, n: usize) -> u64 {
     return res;
 }
 
-pub fn run () {
+y2015::main! {
     let line = &fs::read_to_string("./input/day04.txt")
         .expect("Could not open input")[..];
 
-    println!("4a: {}", find_ith_suffix(line, 5));
-    println!("4b: {}", find_ith_suffix(line, 6));
+    (find_ith_suffix(line,5), find_ith_suffix(line, 6))
 }

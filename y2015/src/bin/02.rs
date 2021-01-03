@@ -1,19 +1,21 @@
 use std::fs;
 
-fn a (ddims: &Vec<Dims>) {
+fn a (ddims: &Vec<Dims>) -> i32 {
     let mut total_paper: i32 = 0;
     for dims in ddims {
         total_paper += dims.paper_needed();
     }
-    println!("2a: {}", total_paper);
+
+    return total_paper;
 }
 
-fn b (ddims: &Vec<Dims>) {
+fn b (ddims: &Vec<Dims>) -> i32 {
     let mut total_ribbon: i32 = 0;
     for dims in ddims {
         total_ribbon += dims.ribbon_needed();
     }
-    println!("2b: {}", total_ribbon);
+
+    return total_ribbon;
 }
 
 #[derive(Debug)]
@@ -65,13 +67,12 @@ fn parse_dims(s: &str) -> Dims {
     };
 }
 
-pub fn run () {
-    let ds = fs::read_to_string("./input/day02.txt")
+y2015::main! {
+    let ds = &fs::read_to_string("./input/day02.txt")
         .expect("Could not open input")
         .lines()
         .map(|line| parse_dims(line))
         .collect::<Vec<_>>();
 
-    a(&ds);
-    b(&ds);
+    (a(ds), b(ds))
 }

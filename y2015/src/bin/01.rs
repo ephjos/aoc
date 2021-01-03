@@ -1,6 +1,6 @@
 use std::fs;
 
-fn a(s: &String) {
+fn a(s: &String) -> i32 {
     let mut x = 0;
     for c in s.chars() {
         if c == '(' {
@@ -10,10 +10,10 @@ fn a(s: &String) {
         }
     }
 
-    println!("1a: {}", x);
+    return x;
 }
 
-fn b(s: &String) {
+fn b(s: &String) -> i32 {
     let mut x: i32 = 0;
     let mut res: usize = 0;
     for (i,c) in s.chars().enumerate() {
@@ -29,13 +29,12 @@ fn b(s: &String) {
         }
     }
 
-    println!("1b: {}", res+1);
+    return (res+1) as i32;
 }
 
-pub fn run () {
-    let s = fs::read_to_string("./input/day01.txt")
+y2015::main! {
+    let s = &fs::read_to_string("./input/day01.txt")
         .expect("Could not read input");
 
-    a(&s);
-    b(&s);
+    (a(s), b(s))
 }

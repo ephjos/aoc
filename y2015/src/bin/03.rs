@@ -1,7 +1,7 @@
 use std::fs;
 use std::collections::HashMap;
 
-fn a (s: &str) {
+fn a (s: &str) -> usize {
     let mut hm = HashMap::new();
     let mut curr = Vec2D{ x: 0, y: 0 };
 
@@ -20,11 +20,11 @@ fn a (s: &str) {
         *count += 1;
     }
 
-    println!("3a: {:#?}", hm.keys().len());
+    return hm.keys().len();
 }
 
 
-fn b (s: &str) {
+fn b (s: &str) -> usize {
     let mut hm = HashMap::new();
     let mut santa = Vec2D{ x: 0, y: 0 };
     let mut robot = Vec2D{ x: 0, y: 0 };
@@ -43,7 +43,7 @@ fn b (s: &str) {
         }
     }
 
-    println!("3b: {:#?}", hm.keys().len());
+    return hm.keys().len();
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -64,10 +64,9 @@ impl Vec2D {
     }
 }
 
-pub fn run () {
-    let cmds = fs::read_to_string("./input/day03.txt")
+y2015::main! {
+    let cmds = &fs::read_to_string("./input/day03.txt")
         .expect("Could not open input");
 
-    a(&cmds[..]);
-    b(&cmds[..]);
+    (a(cmds), b(cmds))
 }
