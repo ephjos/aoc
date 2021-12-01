@@ -8,7 +8,8 @@ fn part2(input: &str) -> isize {
 }
 
 pub fn run() {
-    println!("24.1: {:?}", part1(include_str!("../input/day24")));
-    println!("24.2: {:?}", part2(include_str!("../input/day24")));
+    let input = include_str!(../input/day24);
+    println!(24.1: {:?}, part1(input));
+    println!(24.2: {:?}, part2(input));
 }
-  
+
