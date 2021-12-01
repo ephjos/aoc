@@ -29,7 +29,13 @@ fn part2(input: &str) -> isize {
 */
 
 fn rewrite(input: &str) {
-    let lines = input.lines().map(|l| l.parse::<usize>().expect(&format!("Could not convert line {} to usize", l))).collect::<Vec<usize>>();
+    let lines = input
+        .lines()
+        .map(|l| {
+            l.parse::<usize>()
+                .expect(&format!("Could not convert line {} to usize", l))
+        })
+        .collect::<Vec<usize>>();
     let mut prev_01 = usize::MAX;
     let mut count_01 = 0;
     let mut prev_02 = usize::MAX;
@@ -43,7 +49,7 @@ fn rewrite(input: &str) {
         prev_01 = curr_01;
 
         if i >= 2 {
-            let curr_02 = lines[i-2] + lines[i-1] + lines[i];
+            let curr_02 = lines[i - 2] + lines[i - 1] + lines[i];
             if curr_02 > prev_02 {
                 count_02 += 1;
             }
@@ -59,4 +65,3 @@ pub fn run() {
     // println!("01.2: {:?}", part2(include_str!("../input/day01")));
     rewrite(include_str!("../input/day01"));
 }
-
