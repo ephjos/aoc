@@ -1,4 +1,5 @@
 
+/*
 fn part1(input: &str) -> usize {
     let mut x = 0;
     let mut depth = 0;
@@ -41,10 +42,44 @@ fn part2(input: &str) -> usize {
     }
     return x * depth;
 }
+*/
+
+fn rewrite(input: &str) {
+    let mut x = 0;
+    let mut depth1 = 0;
+    let mut depth2 = 0;
+    let mut aim = 0;
+
+    for line in input.lines() {
+        let toks = line.split(" ").collect::<Vec<_>>();
+        let cmd = toks[0];
+        let val = toks[1].parse::<usize>().expect("Could not parse value");
+
+        match cmd {
+            "up" => {
+                aim -= val;
+                depth1 -= val;
+            },
+            "down" => {
+                aim += val;
+                depth1 += val;
+            },
+            "forward" => {
+                x += val;
+                depth2 += aim * val;
+            },
+            _ => (),
+        }
+    }
+    println!("02.1: {:?}", x*depth1);
+    println!("02.1: {:?}", x*depth2);
+}
+
 
 pub fn run() {
     let input = include_str!("../input/day02");
-    println!("02.1: {:?}", part1(input));
-    println!("02.2: {:?}", part2(input));
+    //println!("02.1: {:?}", part1(input));
+    //println!("02.2: {:?}", part2(input));
+    rewrite(input);
 }
 
