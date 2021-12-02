@@ -51,24 +51,24 @@ fn rewrite(input: &str) {
     let mut aim = 0;
 
     for line in input.lines() {
-        let toks = line.split(" ").collect::<Vec<_>>();
-        let cmd = toks[0];
+        let toks = line.splitn(2, " ").collect::<Vec<_>>();
+        let cmd = toks[0].chars().nth(0).expect("Could not get command");
         let val = toks[1].parse::<usize>().expect("Could not parse value");
 
         match cmd {
-            "up" => {
+            'u' => {
                 aim -= val;
                 depth1 -= val;
             },
-            "down" => {
+            'd'=> {
                 aim += val;
                 depth1 += val;
             },
-            "forward" => {
+            'f'=> {
                 x += val;
                 depth2 += aim * val;
             },
-            _ => (),
+            _ => unreachable!(),
         }
     }
     println!("02.1: {:?}", x*depth1);
