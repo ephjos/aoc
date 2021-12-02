@@ -1,4 +1,3 @@
-
 /*
 fn part1(input: &str) -> usize {
     let mut x = 0;
@@ -59,22 +58,21 @@ fn rewrite(input: &str) {
             'u' => {
                 aim -= val;
                 depth1 -= val;
-            },
-            'd'=> {
+            }
+            'd' => {
                 aim += val;
                 depth1 += val;
-            },
-            'f'=> {
+            }
+            'f' => {
                 x += val;
                 depth2 += aim * val;
-            },
+            }
             _ => unreachable!(),
         }
     }
-    println!("02.1: {:?}", x*depth1);
-    println!("02.1: {:?}", x*depth2);
+    println!("02.1: {:?}", x * depth1);
+    println!("02.1: {:?}", x * depth2);
 }
-
 
 pub fn run() {
     let input = include_str!("../input/day02");
@@ -82,4 +80,3 @@ pub fn run() {
     //println!("02.2: {:?}", part2(input));
     rewrite(input);
 }
-
