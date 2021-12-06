@@ -2,9 +2,10 @@
 //mod day02;
 //mod day03;
 //mod day04;
-mod day05;
+//mod day05;
+mod day06;
 
-mod com;
+pub mod com;
 
 fn main() {
     println!("Advent of Code 2021");
@@ -12,5 +13,6 @@ fn main() {
     //day02::run();
     //day03::run();
     //day04::run();
-    day05::run();
+    //day05::run();
+    day06::run();
 }

@@ -324,3 +324,53 @@ pub fn integer<'a>(input: &str) -> ParseResult<isize> {
     }
     Err(input)
 }
+
+pub fn uinteger<'a>(input: &str) -> ParseResult<usize> {
+    let mut matched = String::new();
+    let mut chars = input.chars();
+
+    match chars.next() {
+        Some(next) if next.is_numeric() => matched.push(next),
+        _ => return Err(input),
+    }
+
+    while let Some(next) = chars.next() {
+        if next.is_numeric() {
+            matched.push(next);
+        } else {
+            break;
+        }
+    }
+
+    let next_index = matched.len();
+
+    if let Ok(i) = matched.parse() {
+        return Ok((&input[next_index..], i));
+    }
+    Err(input)
+}
+
+pub fn integer_u8<'a>(input: &str) -> ParseResult<u8> {
+    let mut matched = String::new();
+    let mut chars = input.chars();
+
+    match chars.next() {
+        Some(next) if next.is_numeric() => matched.push(next),
+        _ => return Err(input),
+    }
+
+    while let Some(next) = chars.next() {
+        if next.is_numeric() {
+            matched.push(next);
+        } else {
+            break;
+        }
+    }
+
+    let next_index = matched.len();
+
+    if let Ok(i) = matched.parse() {
+        return Ok((&input[next_index..], i));
+    }
+    Err(input)
+}
