@@ -8,37 +8,17 @@ fn part1(input: &str) -> usize {
 
     let fish_list = fish_list_parser().parse(input).unwrap().1;
 
-    let mut fish_ages = vec![0usize; 7];
+    let mut fish_ages = vec![0usize; 9];
     for fish in fish_list {
         fish_ages[fish] += 1;
     }
-    let mut new_fish_ages = vec![0usize; 9];
 
     for _ in 0..80 {
-        let temp = fish_ages[0];
-        fish_ages[0] = fish_ages[1];
-        fish_ages[1] = fish_ages[2];
-        fish_ages[2] = fish_ages[3];
-        fish_ages[3] = fish_ages[4];
-        fish_ages[4] = fish_ages[5];
-        fish_ages[5] = fish_ages[6];
-        fish_ages[6] = temp;
-
-        let temp2 = new_fish_ages[0];
-        new_fish_ages[0] = new_fish_ages[1];
-        new_fish_ages[1] = new_fish_ages[2];
-        new_fish_ages[2] = new_fish_ages[3];
-        new_fish_ages[3] = new_fish_ages[4];
-        new_fish_ages[4] = new_fish_ages[5];
-        new_fish_ages[5] = new_fish_ages[6];
-        new_fish_ages[6] = new_fish_ages[7];
-        new_fish_ages[7] = new_fish_ages[8];
-        new_fish_ages[8] = temp+temp2;
-
-        fish_ages[6] += temp2;
+        fish_ages.rotate_left(1);
+        fish_ages[6] += fish_ages[8];
     }
 
-    return fish_ages.iter().sum::<usize>() + new_fish_ages.iter().sum::<usize>();
+    return fish_ages.iter().sum();
 }
 
 fn part2(input: &str) -> usize {
@@ -48,37 +28,17 @@ fn part2(input: &str) -> usize {
 
     let fish_list = fish_list_parser().parse(input).unwrap().1;
 
-    let mut fish_ages = vec![0usize; 7];
+    let mut fish_ages = vec![0usize; 9];
     for fish in fish_list {
         fish_ages[fish] += 1;
     }
-    let mut new_fish_ages = vec![0usize; 9];
 
     for _ in 0..256 {
-        let temp = fish_ages[0];
-        fish_ages[0] = fish_ages[1];
-        fish_ages[1] = fish_ages[2];
-        fish_ages[2] = fish_ages[3];
-        fish_ages[3] = fish_ages[4];
-        fish_ages[4] = fish_ages[5];
-        fish_ages[5] = fish_ages[6];
-        fish_ages[6] = temp;
-
-        let temp2 = new_fish_ages[0];
-        new_fish_ages[0] = new_fish_ages[1];
-        new_fish_ages[1] = new_fish_ages[2];
-        new_fish_ages[2] = new_fish_ages[3];
-        new_fish_ages[3] = new_fish_ages[4];
-        new_fish_ages[4] = new_fish_ages[5];
-        new_fish_ages[5] = new_fish_ages[6];
-        new_fish_ages[6] = new_fish_ages[7];
-        new_fish_ages[7] = new_fish_ages[8];
-        new_fish_ages[8] = temp+temp2;
-
-        fish_ages[6] += temp2;
+        fish_ages.rotate_left(1);
+        fish_ages[6] += fish_ages[8];
     }
 
-    return fish_ages.iter().sum::<usize>() + new_fish_ages.iter().sum::<usize>();
+    return fish_ages.iter().sum();
 }
 
 pub fn run() {
