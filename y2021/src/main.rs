@@ -4,6 +4,8 @@
 //mod day04;
 mod day05;
 
+mod com;
+
 fn main() {
     println!("Advent of Code 2021");
     //day01::run();
