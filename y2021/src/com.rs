@@ -287,6 +287,13 @@ pub fn space1<'a>() -> impl Parser<'a, Vec<char>> {
     one_or_more(whitespace_char())
 }
 
+pub fn word<'a>() -> impl Parser<'a, String> {
+    map(
+        zero_or_more(pred(any_char, |c| c.is_alphanumeric())),
+        |chars| chars.into_iter().collect(),
+    )
+}
+
 pub fn quoted_string<'a>() -> impl Parser<'a, String> {
     map(
         right(
