@@ -18,8 +18,9 @@ mod day16;
 mod day17;
 mod day18;
 mod day19;
-*/
 mod day20;
+*/
+mod day21;
 
 pub mod com;
 
@@ -45,6 +46,7 @@ fn main() {
     day17::run();
     day18::run();
     day19::run();
-    */
     day20::run();
+    */
+    day21::run();
 }
