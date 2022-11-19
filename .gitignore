@@ -13,6 +13,6 @@
 
 # Zig
 zig-cache
-
+zig-out
 
 .vim
