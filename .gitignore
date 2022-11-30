@@ -15,4 +15,7 @@
 zig-cache
 zig-out
 
+# Python
+__pycache__
+
 .vim
