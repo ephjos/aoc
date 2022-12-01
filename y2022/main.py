@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#import d01
+import d01
 #import d02
 #import d03
 #import d04
@@ -30,7 +30,7 @@ import logging
 logging.getLogger().setLevel(logging.WARNING)
 
 def main():
-    #d01.main()
+    d01.main()
     #d02.main()
     #d03.main()
     #d04.main()
