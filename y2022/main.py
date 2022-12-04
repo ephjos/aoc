@@ -2,7 +2,7 @@
 import d01
 import d02
 import d03
-#import d04
+import d04
 #import d05
 #import d06
 #import d07
@@ -33,7 +33,7 @@ def main():
     d01.main()
     d02.main()
     d03.main()
-    #d04.main()
+    d04.main()
     #d05.main()
     #d06.main()
     #d07.main()
