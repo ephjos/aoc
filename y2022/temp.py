@@ -15,7 +15,7 @@ def part2(text: str) -> int:
 
 def main():
     d = 1
-    text = aoc.get_input(2022, d).strip()
+    text = aoc.get_input(2022, d).rstrip()
     print(text) # TODO: remove
 
     print(f'{d}.1: {part1(text)}')
@@ -25,7 +25,7 @@ def main():
         tests: List[str] = [
         ]
         for test in tests:
-            logging.info(f'test: "{test.strip()}"\n  {d}.1: {part1(test.strip())}\n  {d}.2: {part2(test.strip())}')
+            logging.info(f'test: "{test.rstrip()}"\n  {d}.1: {part1(test.rstrip())}\n  {d}.2: {part2(test.rstrip())}')
 
 if __name__ == "__main__":
     main()

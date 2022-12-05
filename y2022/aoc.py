@@ -27,13 +27,13 @@ def get_input(year, day, failures=0, force_query=False):
     session_file = pathlib.Path().home() / "./.aoc_session"
 
     with session_file.open() as sf:
-        session = sf.read().strip()
+        session = sf.read().rstrip()
         cookies = {"session": session}
         resp = requests.get(url=url, cookies=cookies)
         if resp.status_code != 200:
-            logging.warning(f'Request failed with status {resp.status_code}, with text "{resp.text.strip()}"')
+            logging.warning(f'Request failed with status {resp.status_code}, with text "{resp.text.rstrip()}"')
             return get_input(year, day, failures=failures+1, force_query=force_query)
-        content = resp.text.strip()
+        content = resp.text.rstrip()
         with dest_file.open("w") as df:
             df.write(content)
         return content
