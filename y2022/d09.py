@@ -86,7 +86,6 @@ def part2(text: str) -> int:
 def main():
     d = 9
     text = aoc.get_input(2022, d).rstrip()
-    print(text) # TODO: remove
 
     print(f'{d}.1: {part1(text)}')
     print(f'{d}.2: {part2(text)}')
