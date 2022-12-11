@@ -9,7 +9,7 @@ import d07
 import d08
 import d09
 import d10
-#import d11
+import d11
 #import d12
 #import d13
 #import d14
@@ -40,7 +40,7 @@ def main():
     d08.main()
     d09.main()
     d10.main()
-    #d11.main()
+    d11.main()
     #d12.main()
     #d13.main()
     #d14.main()
