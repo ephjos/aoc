@@ -1,5 +1,6 @@
 import aoc
 
+import ast
 import dataclasses
 import enum
 import functools
@@ -8,7 +9,7 @@ import logging
 from typing import Any, List, Tuple, Dict, Optional
 
 def parse_packet(line: str) -> List:
-    return eval(line)
+    return ast.literal_eval(line)
 
 
 def compare(left, right) -> int:
