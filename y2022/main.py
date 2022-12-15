@@ -13,7 +13,7 @@ import d11
 import d12
 import d13
 import d14
-#import d15
+import d15
 #import d16
 #import d17
 #import d18
@@ -44,7 +44,7 @@ def main():
     d12.main()
     d13.main()
     d14.main()
-    #d15.main()
+    d15.main()
     #d16.main()
     #d17.main()
     #d18.main()
