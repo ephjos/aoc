@@ -1,0 +1,92 @@
+#!/bin/bash
+#
+# Joe Hines - 2023/05/07
+#
+
+# =============================================================================
+# Constants
+# =============================================================================
+TOKEN_FILE="./.token"
+OUTPUT_DIR="./inputs"
+FORCE="0"
+
+# =============================================================================
+# Functions
+# =============================================================================
+usage() {
+  echo -e "USAGE: download YEAR DAY [--force]"
+  echo    "       uses AoC session token from ./.token"
+  exit 123
+}
+
+# =============================================================================
+# Argument parsing/Environment checks+preparation
+# =============================================================================
+if [ -z "$1" ]; then
+  echo "YEAR not provided"
+  usage
+fi
+
+if [ -z "$2" ]; then
+  echo "DAY not provided"
+  usage
+fi
+
+if [ ! -z "$3" ]; then
+  if [ "--force" = "$3" ]; then
+    FORCE="1"
+  else
+    echo "$3 must be --force or not provided"
+    usage
+  fi
+fi
+
+if [ ! -f "$TOKEN_FILE" ]; then
+  echo "./.token does not exist"
+  usage
+fi
+
+if [ ! -s "$TOKEN_FILE" ]; then
+  echo "./.token must contain the AoC session token, is empty"
+  usage
+fi
+
+# =============================================================================
+# Get token
+# =============================================================================
+TOKEN=$(cat "$TOKEN_FILE")
+
+# =============================================================================
+# Check if file already exists
+# =============================================================================
+
+OUTPUT_FILE="$OUTPUT_DIR/y$1/d$(printf '%02d' $2)"
+
+if [ -f "$OUTPUT_FILE" ]; then
+  if [ "0" = $FORCE ]; then
+    echo "$OUTPUT_FILE already exists. Provide --force to override"
+    exit 0
+  fi
+fi
+
+# =============================================================================
+# Prepare output directory
+# =============================================================================
+mkdir --parents "$OUTPUT_FILE" 2> /dev/null
+rmdir "$OUTPUT_FILE" 2> /dev/null
+
+# =============================================================================
+# Download and save file
+# =============================================================================
+set -euo pipefail
+
+curl "https://adventofcode.com/$1/day/$2/input" \
+  --silent \
+  --fail \
+  --show-error \
+  --cookie "session=$TOKEN" \
+  --output "$OUTPUT_FILE"
+
+echo "Downloaded https://adventofcode.com/$1/day/$2/input > $OUTPUT_FILE"
+
+

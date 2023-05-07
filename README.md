@@ -1,3 +1,3 @@
 # aoc
 
-Advent of Code challenges
+Advent of Code solutions

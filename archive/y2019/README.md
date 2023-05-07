@@ -1,3 +1,0 @@
-# aoc2019 - Stats
-
-Left off on Day 22 Part 2...

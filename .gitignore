@@ -19,3 +19,7 @@ zig-out
 __pycache__
 
 .vim
+
+# AoC Data
+.token
+inputs

@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Joe Hines - 2023/05/07
+#
+
+
+set -euo pipefail
+
+# =============================================================================
+# Current year and day of month
+# =============================================================================
+current_year=$(date +%Y)
+current_day=$(date +%d | sed -e 's/^0//g')
+
+# =============================================================================
+# Get all inputs up to (and including) current year and day
+# =============================================================================
+for y in $(seq 2015 $current_year); do
+  for d in $(seq 1 25); do
+    if [ "$y" = "$current_year" ]; then
+      if [ $d -gt $current_day ]; then
+        exit 0
+      fi
+    fi
+    ./download "$y" "$d"
+  done
+done
