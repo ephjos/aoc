@@ -22,10 +22,51 @@
 // Includes
 // =============================================================================
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <strings.h>
+#include <string.h>
+
+
+// =============================================================================
+// Number XMacros
+// =============================================================================
+
+// Lists all of the single-word name number types
+#define NUMBER_TYPES(F) \
+	F(char) \
+	F(short) \
+	F(int) \
+	F(long) \
+	F(float) \
+	F(double) \
+	F(uint8_t) \
+	F(uint16_t) \
+	F(uint32_t) \
+	F(uint64_t) \
+	F(int8_t) \
+	F(int16_t) \
+	F(int32_t) \
+	F(int64_t) \
+
+// Define a qsort compatible comparator for each number type
+#define NUMBER_COMPARATOR(n, ...) \
+int compare_##n(const void *a, const void *b) { \
+	n cast_a = *((n*)a); \
+	n cast_b = *((n*)b); \
+	return (cast_a > cast_b) - (cast_a < cast_b); \
+} \
+
+NUMBER_TYPES(NUMBER_COMPARATOR)
+
+// Define a simple qsort wrapper for each number type
+#define NUMBER_QSORT(n, ...) \
+void qsort_##n(n *arr, uint32_t nmemb) { \
+	qsort(arr, nmemb, sizeof(n), compare_##n); \
+} \
+
+NUMBER_TYPES(NUMBER_QSORT)
 
 // =============================================================================
 // Macros
