@@ -152,4 +152,14 @@ inline struct input_file get_input_file() {
 	return i;
 }
 
+// =============================================================================
+// Points
+// =============================================================================
+struct point {
+	int32_t x;
+	int32_t y;
+};
+
+#define POINT_EQUALS(a, b) (a.x == b.x && a.y == b.y)
+
 #endif
