@@ -24,4 +24,4 @@ __pycache__
 # AoC Data
 .token
 inputs
-
+*.csv
