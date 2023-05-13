@@ -75,7 +75,9 @@ char *str2md5(const char *str, int32_t length) {
 // Defines
 // =============================================================================
 
-#define NUM_THREADS 3
+#ifndef NUM_THREADS
+#define NUM_THREADS 4
+#endif
 
 // =============================================================================
 // Number XMacros
