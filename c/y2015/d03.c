@@ -97,8 +97,8 @@ int main(const int argc, const char *argv[]) {
 		}
 	}
 
-	part_1("%ld", houses);
-	part_2("%ld", houses_2);
+	part_1("%"PRIu64, houses);
+	part_2("%"PRIu64, houses_2);
 
 	free_input_file(&file);
 	return 0;
