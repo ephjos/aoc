@@ -8,20 +8,20 @@ const int CHAR_TO_MOVE[2] = {1, -1};
 
 
 int main(const int argc, const char *argv[]) {
-	struct input_file file = get_input_file();
+  struct input_file file = get_input_file();
 
-	int64_t floor = 0;
-	uint64_t crossed_to_basement = 0;
-	for (uint64_t i = 0; i < file.len; i++) {
-		floor += CHAR_TO_MOVE[file.bytes[i]-40];
-		if (floor < 0 && !crossed_to_basement) {
-			crossed_to_basement = i+1;
-		}
-	}
+  int64_t floor = 0;
+  uint64_t crossed_to_basement = 0;
+  for (uint64_t i = 0; i < file.len; i++) {
+    floor += CHAR_TO_MOVE[file.bytes[i]-40];
+    if (floor < 0 && !crossed_to_basement) {
+      crossed_to_basement = i+1;
+    }
+  }
 
-	part_1("%"PRId64, floor);
-	part_2("%"PRIu64, crossed_to_basement);
+  part_1("%"PRId64, floor);
+  part_2("%"PRIu64, crossed_to_basement);
 
-	free_input_file(&file);
-	return 0;
+  free_input_file(&file);
+  return 0;
 }
