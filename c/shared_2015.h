@@ -24,10 +24,51 @@
 #include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+
+// MD5 hashes
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#if defined(__APPLE__)
+#  define COMMON_DIGEST_FOR_OPENSSL
+#  include <CommonCrypto/CommonDigest.h>
+#  define SHA1 CC_SHA1
+#else
+#  include <openssl/md5.h>
+#endif
+#pragma GCC diagnostic push
+
+// https://stackoverflow.com/a/8389763
+char *str2md5(const char *str, int32_t length) {
+  int32_t n;
+  MD5_CTX c;
+  unsigned char digest[16];
+  char *out = (char*)malloc(33);
+
+  MD5_Init(&c);
+
+  while (length > 0) {
+    if (length > 512) {
+      MD5_Update(&c, str, 512);
+    } else {
+      MD5_Update(&c, str, length);
+    }
+    length -= 512;
+    str += 512;
+  }
+
+  MD5_Final(digest, &c);
+
+  for (n = 0; n < 16; ++n) {
+    snprintf(&(out[n*2]), 16*2, "%02x", (uint32_t)digest[n]);
+  }
+
+  return out;
+}
 
 
 // =============================================================================
