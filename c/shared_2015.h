@@ -23,6 +23,7 @@
 // =============================================================================
 #include <assert.h>
 #include <ctype.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -35,20 +36,20 @@
 
 // Lists all of the single-word name number types
 #define NUMBER_TYPES(F) \
-	F(char) \
-	F(short) \
-	F(int) \
-	F(long) \
-	F(float) \
-	F(double) \
-	F(uint8_t) \
-	F(uint16_t) \
-	F(uint32_t) \
-	F(uint64_t) \
-	F(int8_t) \
-	F(int16_t) \
-	F(int32_t) \
-	F(int64_t) \
+	F(char, _) \
+	F(short, _) \
+	F(int, _) \
+	F(long, _) \
+	F(float, _) \
+	F(double, _) \
+	F(uint8_t, _) \
+	F(uint16_t, _) \
+	F(uint32_t, _) \
+	F(uint64_t, _) \
+	F(int8_t, _) \
+	F(int16_t, _) \
+	F(int32_t, _) \
+	F(int64_t, _) \
 
 // Define a qsort compatible comparator for each number type
 #define NUMBER_COMPARATOR(n, ...) \

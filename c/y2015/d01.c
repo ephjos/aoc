@@ -6,6 +6,7 @@
 // In ASCII ( is 40, ) is 41. This maps c-40 to the corresponding floor move
 const int CHAR_TO_MOVE[2] = {1, -1};
 
+
 int main(const int argc, const char *argv[]) {
 	struct input_file file = get_input_file();
 
@@ -18,8 +19,8 @@ int main(const int argc, const char *argv[]) {
 		}
 	}
 
-	part_1("%ld", floor);
-	part_2("%lu", crossed_to_basement);
+	part_1("%"PRId64, floor);
+	part_2("%"PRIu64, crossed_to_basement);
 
 	free_input_file(&file);
 	return 0;
