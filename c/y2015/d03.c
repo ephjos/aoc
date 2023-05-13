@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #define YEAR 2015
 #define DAY 3
 

@@ -25,6 +25,7 @@
 #include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -70,6 +71,11 @@ char *str2md5(const char *str, int32_t length) {
   return out;
 }
 
+// =============================================================================
+// Defines
+// =============================================================================
+
+#define NUM_THREADS 3
 
 // =============================================================================
 // Number XMacros
