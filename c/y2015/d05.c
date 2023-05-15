@@ -35,7 +35,7 @@ int main(const int argc, const char *argv[]) {
     .nice_count = 0,
     .has_double_pair = 0,
     .has_spaced_pair = 0,
-    .pairs = {0},
+    .pairs = {{0}},
   };
 
   while (i < file.len && (c = file.bytes[i++]) != EOF) {
@@ -53,30 +53,30 @@ int main(const int argc, const char *argv[]) {
         .nice_count = state_2.nice_count,
           .has_double_pair = 0,
           .has_spaced_pair = 0,
-          .pairs = {0},
+          .pairs = {{0}},
       };
 
       prev_c = '\0';
       prev_prev_c = '\0';
       continue;
     } else {
-      uint8_t n = c-A_OFFSET;
+      uint8_t n = (uint8_t)c-A_OFFSET;
       state_1.vowel_count += IS_VOWEL[n];
-      state_1.has_double = MAX(state_1.has_double, c == prev_c);
-      state_1.has_illegal = MAX(state_1.has_illegal, prev_c == 'a' && c == 'b');
-      state_1.has_illegal = MAX(state_1.has_illegal, prev_c == 'c' && c == 'd');
-      state_1.has_illegal = MAX(state_1.has_illegal, prev_c == 'p' && c == 'q');
-      state_1.has_illegal = MAX(state_1.has_illegal, prev_c == 'x' && c == 'y');
+      state_1.has_double = (uint8_t)MAX(state_1.has_double, c == prev_c);
+      state_1.has_illegal = (uint8_t)MAX(state_1.has_illegal, prev_c == 'a' && c == 'b');
+      state_1.has_illegal = (uint8_t)MAX(state_1.has_illegal, prev_c == 'c' && c == 'd');
+      state_1.has_illegal = (uint8_t)MAX(state_1.has_illegal, prev_c == 'p' && c == 'q');
+      state_1.has_illegal = (uint8_t)MAX(state_1.has_illegal, prev_c == 'x' && c == 'y');
 
       if (isalpha(prev_c)) {
-        uint8_t prev_n = prev_c-A_OFFSET;
+        uint8_t prev_n = (uint8_t)prev_c-A_OFFSET;
         state_2.pairs[prev_n][n] += 1;
 
         if ((c != prev_c) || (c != prev_prev_c) || (state_2.pairs[prev_n][n] > 2)) {
-          state_2.has_double_pair = MAX(state_2.has_double_pair, 
+          state_2.has_double_pair = (uint8_t)MAX(state_2.has_double_pair, 
               state_2.pairs[prev_n][n]>1);
         }
-        state_2.has_spaced_pair = MAX(state_2.has_spaced_pair, 
+        state_2.has_spaced_pair = (uint8_t)MAX(state_2.has_spaced_pair, 
             c == prev_prev_c);
       }
     }

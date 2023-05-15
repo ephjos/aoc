@@ -9,13 +9,13 @@
 #ifndef YEAR
 #error YEAR is not defined // Forces compilation to fail if YEAR is not defined
 #define YEAR 0 // Makes the rest of this code pass checks in isolation, never
-							 // hit since this branch exits with the above exit
+							 // hit since this branch exits before this statement
 #endif
 
 #ifndef DAY
 #error DAY is not defined // Forces compilation to fail if DAY is not defined
 #define DAY 0 // Makes the rest of this code pass checks in isolation, never
-							 // hit since this branch exits with the above exit
+							 // hit since this branch exits before this statement
 #endif
 
 // =============================================================================
@@ -38,45 +38,25 @@
 #  define COMMON_DIGEST_FOR_OPENSSL
 #  include <CommonCrypto/CommonDigest.h>
 #  define SHA1 CC_SHA1
+// https://stackoverflow.com/a/8389763
+unsigned char *MD5(const unsigned char *s, int32_t length, unsigned char *out) {
+  MD5_CTX c;
+  MD5_Init(&c);
+  MD5_Update(&c, s, length);
+  MD5_Final(out, &c);
+  return NULL;
+}
 #else
 #  include <openssl/md5.h>
 #endif
 #pragma GCC diagnostic push
-
-// https://stackoverflow.com/a/8389763
-char *str2md5(const char *str, int32_t length) {
-  int32_t n;
-  MD5_CTX c;
-  unsigned char digest[16];
-  char *out = (char*)malloc(33);
-
-  MD5_Init(&c);
-
-  while (length > 0) {
-    if (length > 512) {
-      MD5_Update(&c, str, 512);
-    } else {
-      MD5_Update(&c, str, length);
-    }
-    length -= 512;
-    str += 512;
-  }
-
-  MD5_Final(digest, &c);
-
-  for (n = 0; n < 16; ++n) {
-    snprintf(&(out[n*2]), 16*2, "%02x", (uint32_t)digest[n]);
-  }
-
-  return out;
-}
 
 // =============================================================================
 // Defines
 // =============================================================================
 
 #ifndef NUM_THREADS
-#define NUM_THREADS 4
+#define NUM_THREADS 2
 #endif
 
 // =============================================================================

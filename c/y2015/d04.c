@@ -12,13 +12,6 @@ typedef struct thread_args_t {
   uint32_t suffix_6;
 } thread_args_t;
 
-// https://stackoverflow.com/a/8389763
-static inline void md5_leading_zeros(const char *s, int32_t length, unsigned char *out) {
-  MD5_CTX c;
-  MD5_Init(&c);
-  MD5_Update(&c, s, length);
-  MD5_Final(out, &c);
-}
 
 struct input_file file;
 
@@ -33,7 +26,7 @@ void *check_hashes(void *args) {
 
   for (uint32_t i = thread_args->start; i < thread_args->end; i++) {
     int x = snprintf(buf+prefix_len, rl, "%d", i);
-    md5_leading_zeros(buf, prefix_len+x, digest);
+    MD5((unsigned char*)buf, prefix_len+x, digest);
 
     int num_zeros = (4 * (!digest[0] && !digest[1])) + 
                     (digest[2] < 0x10) + 
