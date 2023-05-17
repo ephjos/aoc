@@ -259,10 +259,41 @@ NUMBER_TYPES(DEFINE_LIST_FOR)
 #define XIS_BETWEEN( x, a, b ) \
     ((unsigned char)((x) > (a) && (x) < (b)))
 
+// =============================================================================
+// Enum macros
+// =============================================================================
+/*
+   Allows creating a enum with enum to string mapping:
 
-  // =============================================================================
-  // Input File
-  // =============================================================================
+   #define COLORS(N, V) \
+     N(Colors) \
+     V(Red) \
+     V(Blue) \
+     V(Green) \
+   
+   DEFINE_ENUM(COLORS);
+*/
+
+#define E_SHOW_NAME(N) N
+#define E_SHOW_NAME_COUNT(N) N##Count
+#define E_SHOW_NAME_STRINGS(N) N##Strings
+#define E_SHOW_VALUE(V) V,
+#define E_VALUE_STRING(V) #V,
+#define E_NOOP(X)
+#define DEFINE_ENUM(E) \
+enum E(E_SHOW_NAME, E_NOOP) { \
+  E(E_NOOP, E_SHOW_VALUE) \
+  E(E_SHOW_NAME_COUNT, E_NOOP), \
+}; \
+\
+const char *E(E_SHOW_NAME_STRINGS,E_NOOP)[E(E_SHOW_NAME_COUNT, E_NOOP)] = { \
+  E(E_NOOP, E_VALUE_STRING) \
+}\
+  
+
+// =============================================================================
+// Input File
+// =============================================================================
 #define INPUT_FILENAME_BUF_SIZE 24
   struct input_file {
     uint64_t len;

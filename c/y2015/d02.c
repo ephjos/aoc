@@ -3,11 +3,13 @@
 
 #include "../shared_2015.h"
 
-enum TokenType {
-  TOKEN_NUM,
-  TOKEN_X,
-  TOKEN_NEWLINE
-};
+#define TOKEN_TYPE(N, V) \
+  N(TokenType) \
+  V(TOKEN_NUM) \
+  V(TOKEN_X) \
+  V(TOKEN_NEWLINE) \
+
+DEFINE_ENUM(TOKEN_TYPE);
 
 typedef struct Token {
   enum TokenType type;
@@ -72,6 +74,7 @@ int main(const int argc, const char *argv[]) {
   i = 0;
   while (i < list_size(&tokens)) {
     Token token = Token_list_get(&tokens, i++);
+
     if (token.type == TOKEN_NUM) {
       uint32_t l = token.value;
 
