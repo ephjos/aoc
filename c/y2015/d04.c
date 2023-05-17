@@ -26,7 +26,10 @@ void *check_hashes(void *args) {
 
   for (uint32_t i = thread_args->start; i < thread_args->end; i++) {
     int x = snprintf(buf+prefix_len, rl, "%d", i);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     MD5((unsigned char*)buf, prefix_len+x, digest);
+#pragma GCC diagnostic pop
 
     int num_zeros = (4 * (!digest[0] && !digest[1])) + 
                     (digest[2] < 0x10) + 
