@@ -64,6 +64,40 @@ unsigned char *MD5(
 #endif
 
 // =============================================================================
+// Macros
+// =============================================================================
+#define eprintf( format, ... ) \
+    fprintf(stderr, format, __VA_ARGS__) \
+
+#define part_1( format, ... ) \
+    fprintf(stdout, "%d.%02d.1: " format "\n", YEAR, DAY, __VA_ARGS__) \
+
+#define part_2( format, ... ) \
+    fprintf(stdout, "%d.%02d.2: " format "\n", YEAR, DAY, __VA_ARGS__) \
+
+#define DDUMP( fmt, ... ) \
+    fprintf(stderr, "%s:%d:%s(): " fmt "\n", __FILE__, \
+        __LINE__, __func__, ##__VA_ARGS__); \
+
+#define DUMP( fmt, val ) \
+    printf("%s = " fmt "\n", #val, val);
+
+#undef MAX
+#define MAX( a, b ) ((a) > (b) ? (a) : (b))
+
+#undef MIN
+#define MIN( a, b ) ((a) > (b) ? (b) : (a))
+
+#undef ABS
+#define ABS( x ) (((x) < 0) ? (-x) : (x))
+
+#define IS_BETWEEN( x, a, b ) \
+    ((unsigned char)((x) >= (a) && (x) <= (b)))
+
+#define XIS_BETWEEN( x, a, b ) \
+    ((unsigned char)((x) > (a) && (x) < (b)))
+
+// =============================================================================
 // List template
 // =============================================================================
 
@@ -185,6 +219,160 @@ unsigned char *MD5(
   }                                                                            \
 
 // =============================================================================
+// Hash Table template
+// =============================================================================
+
+#define HT_INITIAL_CAP_SHIFT 10
+#define HT_MAX_LOAD 0.65
+#define HT_MIN_LOAD_FACTOR 0.25
+#define ht_free(ht) free((ht)->arr)
+
+// djb2: http://www.cse.yorku.ca/~oz/hash.html
+uint64_t hash_string(const char *str) {
+  uint64_t h = 5381;
+  int c;
+
+  while ((c = *str++)) {
+    h = ((h << 5) + h) + c;
+  }
+
+  return h;
+}
+
+// https://en.wikipedia.org/wiki/Hash_function
+// https://probablydance.com/2018/06/16/fibonacci-hashing-the-optimization-that-the-world-forgot-or-a-better-alternative-to-integer-modulo/
+#define A_16 40503u
+#define A_32 2654435769u
+#define A_48 173961102589771lu
+#define A_64 11400714819323198485llu
+uint64_t fibonacci_slot(uint64_t hash, uint64_t bit_slots) {
+  hash ^= hash >> (64-bit_slots); 
+  return (A_64*hash) >> (64 - bit_slots);
+}
+
+#define DEFINE_HT_FOR(T, ...)                                                  \
+typedef struct he_##T##_t he_##T##_t;                                          \
+typedef struct he_##T##_t {                                                    \
+  uint8_t used;                                                                \
+  uint8_t rem;                                                                 \
+  uint64_t key;                                                                \
+  uint64_t hash;                                                               \
+  T value;                                                                     \
+} he_##T##_t;                                                                  \
+                                                                               \
+typedef struct ht_##T##_t ht_##T##_t;                                          \
+typedef struct ht_##T##_t {                                                    \
+  uint64_t cnt;                                                                \
+  uint64_t rem;                                                                \
+  uint64_t cap;                                                                \
+  uint64_t bit;                                                                \
+  double alpha;                                                                \
+  double alpha_max;                                                            \
+  he_##T##_t *arr;                                                             \
+} ht_##T##_t;                                                                  \
+                                                                               \
+ht_##T##_t ht_##T##_create() {                                                 \
+  return (ht_##T##_t) {                                                        \
+    .cnt = 0,                                                                  \
+    .cap = 1 << HT_INITIAL_CAP_SHIFT,                                          \
+    .bit = HT_INITIAL_CAP_SHIFT,                                               \
+    .arr = (he_##T##_t*)calloc(1 << HT_INITIAL_CAP_SHIFT, sizeof(he_##T##_t)), \
+  };                                                                           \
+}                                                                              \
+                                                                               \
+void ht_##T##_put_core(ht_##T##_t *ht, uint64_t key, T value) {                \
+  uint64_t slot = fibonacci_slot(key, ht->bit);                                \
+  uint64_t i = slot;                                                           \
+                                                                               \
+  do {                                                                         \
+    if (!ht->arr[i].used ||                                                    \
+        ht->arr[i].rem ||                                                      \
+        compare_##T(&ht->arr[i].key, &key) == 0) {                             \
+      ht->arr[i] = (he_##T##_t) {                                              \
+        .used = 1,                                                             \
+        .key = key,                                                            \
+        .hash = slot,                                                          \
+        .value = value,                                                        \
+      };                                                                       \
+      ht->cnt++;                                                               \
+      ht->alpha = (double)(ht->cnt+ht->rem) / ht->cap;                         \
+      ht->alpha_max = MAX(ht->alpha_max, ht->alpha);                           \
+                                                                               \
+      return;                                                                  \
+    }                                                                          \
+  } while ((i = (i+1) % ht->cap) != slot);                                     \
+                                                                               \
+  fprintf(stderr, "Table full   \n");                                          \
+  exit(1);                                                                     \
+}                                                                              \
+                                                                               \
+static inline void ht_##T##_resize(ht_##T##_t *ht) {                           \
+  if (ht->alpha > HT_MAX_LOAD) {                                               \
+    ht->bit += 1;                                                              \
+  } else if (ht->alpha < (ht->alpha_max/4)) {                                  \
+    ht->bit -= 1;                                                              \
+  } else {                                                                     \
+    return;                                                                    \
+  }                                                                            \
+                                                                               \
+  uint64_t old_cap = ht->cap;                                                  \
+  uint64_t old_cnt = ht->cnt;                                                  \
+  he_##T##_t *old_arr = (he_##T##_t*)calloc(old_cap, sizeof(he_##T##_t));      \
+  memcpy(old_arr, ht->arr, ht->cap*sizeof(he_##T##_t));                        \
+                                                                               \
+  ht->cap = 1 << ht->bit;                                                      \
+  ht->arr = (he_##T##_t*)calloc(ht->cap, sizeof(he_##T##_t));                  \
+                                                                               \
+  for (uint64_t i = 0; i < old_cap; i++) {                                     \
+    if (old_arr[i].used) {                                                     \
+      ht_##T##_put_core(ht, old_arr[i].key, old_arr[i].value);                 \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  ht->alpha = (double)(ht->cnt+ht->rem) / ht->cap;                             \
+  ht->alpha_max = MAX(ht->alpha_max, ht->alpha);                               \
+  ht->cnt = old_cnt;                                                           \
+  ht->rem = 0;                                                                 \
+                                                                               \
+  free(old_arr);                                                               \
+}                                                                              \
+                                                                               \
+void ht_##T##_put(ht_##T##_t *ht, uint64_t key, T value) {                     \
+  ht_##T##_put_core(ht, key, value);                                           \
+  ht_##T##_resize(ht);                                                         \
+}                                                                              \
+                                                                               \
+T *ht_##T##_get(ht_##T##_t *ht, uint64_t key) {                                \
+  uint64_t slot = fibonacci_slot(key, ht->bit);                                \
+  uint64_t i = slot;                                                           \
+                                                                               \
+  do {                                                                         \
+    if (ht->arr[i].used && compare_##T(&ht->arr[i].key, &key) == 0) {          \
+      return &ht->arr[i].value;                                                \
+    }                                                                          \
+  } while ((i = (i+1) % ht->cap) != slot);                                     \
+                                                                               \
+  return NULL;                                                                 \
+}                                                                              \
+                                                                               \
+void ht_##T##_remove(ht_##T##_t *ht, uint64_t key) {                           \
+  uint64_t slot = fibonacci_slot(key, ht->bit);                                \
+  uint64_t i = slot;                                                           \
+                                                                               \
+  do {                                                                         \
+    if (ht->arr[i].used && compare_##T(&ht->arr[i].key, &key) == 0) {          \
+      ht->arr[i].rem = 1;                                                      \
+      ht->cnt--;                                                               \
+      ht->rem++;                                                               \
+      return;                                                                  \
+    }                                                                          \
+  } while ((i = (i+1) % ht->cap) != slot);                                     \
+                                                                               \
+  fprintf(stderr, "Cannot remove key %" PRIu64 ", not found   \n", key);       \
+  exit(1);                                                                     \
+}                                                                              \
+
+// =============================================================================
 // Number XMacros
 // =============================================================================
 
@@ -225,39 +413,7 @@ NUMBER_TYPES(NUMBER_QSORT)
 
 NUMBER_TYPES(DEFINE_LIST_FOR)
 
-// =============================================================================
-// Macros
-// =============================================================================
-#define eprintf( format, ... ) \
-    fprintf(stderr, format, __VA_ARGS__) \
-
-#define part_1( format, ... ) \
-    fprintf(stdout, "%d.%02d.1: " format "\n", YEAR, DAY, __VA_ARGS__) \
-
-#define part_2( format, ... ) \
-    fprintf(stdout, "%d.%02d.2: " format "\n", YEAR, DAY, __VA_ARGS__) \
-
-#define DDUMP( fmt, ... ) \
-    fprintf(stderr, "%s:%d:%s(): " fmt "\n", __FILE__, \
-        __LINE__, __func__, ##__VA_ARGS__); \
-
-#define DUMP( fmt, val ) \
-    printf("%s = " fmt "\n", #val, val);
-
-#undef MAX
-#define MAX( a, b ) ((a) > (b) ? (a) : (b))
-
-#undef MIN
-#define MIN( a, b ) ((a) > (b) ? (b) : (a))
-
-#undef ABS
-#define ABS( x ) (((x) < 0) ? (-x) : (x))
-
-#define IS_BETWEEN( x, a, b ) \
-    ((unsigned char)((x) >= (a) && (x) <= (b)))
-
-#define XIS_BETWEEN( x, a, b ) \
-    ((unsigned char)((x) > (a) && (x) < (b)))
+NUMBER_TYPES(DEFINE_HT_FOR)
 
 // =============================================================================
 // Enum macros
