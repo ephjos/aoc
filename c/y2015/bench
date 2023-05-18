@@ -15,9 +15,7 @@ fi
 set -u
 
 for file in $files; do
-  gcc -O3 -Wall -Wextra -Wconversion -Wdouble-promotion \
-    -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion \
-    -fsanitize=address,undefined -fsanitize-undefined-trap-on-error \
+  gcc -O3 \
     -pthread \
     -lcrypto \
     -DNUM_THREADS=$(getconf _NPROCESSORS_ONLN) \
@@ -25,7 +23,7 @@ for file in $files; do
 done
 
 #hyperfine --warmup=1000 --min-runs=500 --shell=none --export-csv=bench.csv $(ls -A1 bin/*)
-hyperfine --warmup=100 --min-runs=50 --shell=none --export-csv=bench.csv $(ls -A1 bin/*)
+hyperfine --warmup=10 --min-runs=50 --shell=none --export-csv=bench.csv $(ls -A1 bin/*)
 
 echo
 total=$(awk -F"," 'NR > 1 { sum+=$2; std+=$3 } END { print sum" ± "std }' < bench.csv)

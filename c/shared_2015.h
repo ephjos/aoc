@@ -222,22 +222,39 @@ unsigned char *MD5(
 // Hash Table template
 // =============================================================================
 
-#define HT_INITIAL_CAP_SHIFT 10
-#define HT_MAX_LOAD 0.65
+#define HT_INITIAL_CAP_SHIFT 4
+#define HT_MAX_LOAD 0.60
 #define HT_MIN_LOAD_FACTOR 0.25
 #define ht_free(ht) free((ht)->arr)
 
 // djb2: http://www.cse.yorku.ca/~oz/hash.html
-uint64_t hash_string(const char *str) {
+static inline uint64_t hash_string(const char *string) {
   uint64_t h = 5381;
   int c;
 
-  while ((c = *str++)) {
+  while ((c = *string++)) {
     h = ((h << 5) + h) + c;
   }
 
   return h;
 }
+
+// Modified djb2 for any block of bytes. Must use manual bounds checking
+// since there is no guarantee of a null terminator
+static inline uint64_t hash_bytes(const char *bytes, uint64_t n) {
+  uint64_t h = 5381;
+  int c;
+  uint64_t i;
+
+  for (i = 0; i < n; i++) {
+    c = *bytes++;
+    h = ((h << 5) + h) + c;
+  }
+
+  return h;
+}
+
+#define hash_struct(s) hash_bytes((char*)s, sizeof(*s))
 
 // https://en.wikipedia.org/wiki/Hash_function
 // https://probablydance.com/2018/06/16/fibonacci-hashing-the-optimization-that-the-world-forgot-or-a-better-alternative-to-integer-modulo/
@@ -290,6 +307,7 @@ void ht_##T##_put_core(ht_##T##_t *ht, uint64_t key, T value) {                \
         compare_##T(&ht->arr[i].key, &key) == 0) {                             \
       ht->arr[i] = (he_##T##_t) {                                              \
         .used = 1,                                                             \
+        .rem = 0,                                                              \
         .key = key,                                                            \
         .hash = slot,                                                          \
         .value = value,                                                        \
