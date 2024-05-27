@@ -61,7 +61,6 @@ fn run_day(d: u8, allocator: std.mem.Allocator) anyerror!f64 {
         const samples_f64 = @as(f64, @floatFromInt(config.samples));
 
         // Time part a
-        timer.reset();
         const a_start = timer.read();
         @setEvalBranchQuota(1 << 14);
         inline for (0..config.samples) |_| {
@@ -72,7 +71,6 @@ fn run_day(d: u8, allocator: std.mem.Allocator) anyerror!f64 {
 
         // Time part b
         const b_start = timer.read();
-        timer.reset();
         @setEvalBranchQuota(1 << 14);
         inline for (0..config.samples) |_| {
             try run_day_part(d, DayPart.B, allocator);
