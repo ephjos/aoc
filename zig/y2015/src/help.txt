@@ -1,0 +1,4 @@
+y2015: AoC y2015 solutions
+
+    [-d/--day]                        Day to run, runs all if null [null]
+    [--help]                          Show this menu
