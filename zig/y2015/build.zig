@@ -8,9 +8,15 @@ pub fn build(b: *std.Build) void {
     const benchmark = b.option(bool, "benchmark", "Build in benchmark mode") orelse false;
     const samples = b.option(u32, "samples", "Number of iterations to time in benchmark mode") orelse 8;
 
+    // Set from benchmark/day04.py testing
+    const day04_window_size = b.option(u64, "day04_window_size", "") orelse (1 << 20);
+    const day04_block_size = b.option(u64, "day04_block_size", "") orelse (1 << 12);
+
     const options = b.addOptions();
     options.addOption(bool, "benchmark", benchmark);
     options.addOption(u32, "samples", samples);
+    options.addOption(u64, "day04_window_size", day04_window_size);
+    options.addOption(u64, "day04_block_size", day04_block_size);
 
     // Setup `zig build test` mem check
     const test_step = b.step("test", "Run unit tests");

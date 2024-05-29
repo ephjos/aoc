@@ -61,21 +61,21 @@ pub fn b(allocator: std.mem.Allocator) anyerror!void {
     const key = lines.first();
 
     // Sliding window that is broken up into blocks per thread
-    const window_size: usize = 1 << 20;
-    var window_end: usize = window_size;
+    const day04_window_size: usize = config.day04_window_size;
+    var window_end: usize = day04_window_size;
 
     var block_start: usize = 0;
-    const block_size: usize = (1 << 10);
+    const day04_block_size: usize = config.day04_block_size;
 
     while (first_suffix.load(ORDER) == INITIAL_SUFFIX) {
         wait_group.reset();
 
-        while (block_start < window_end) : (block_start += block_size) {
-            thread_pool.spawnWg(&wait_group, checkMd5Interval, .{ &first_suffix, key, block_start, block_start + block_size });
+        while (block_start < window_end) : (block_start += day04_block_size) {
+            thread_pool.spawnWg(&wait_group, checkMd5Interval, .{ &first_suffix, key, block_start, block_start + day04_block_size });
         }
 
         thread_pool.waitAndWork(&wait_group);
-        window_end += window_size;
+        window_end += day04_window_size;
     }
 
     if (!config.benchmark) {
