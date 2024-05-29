@@ -4,6 +4,7 @@ const config = @import("config");
 const Day01 = @import("./day01.zig");
 const Day02 = @import("./day02.zig");
 const Day03 = @import("./day03.zig");
+const Day04 = @import("./day04.zig");
 
 const NANOS_IN_MILI: f64 = 1_000_000;
 
@@ -46,6 +47,7 @@ fn run_day_part(d: u8, p: DayPart, allocator: std.mem.Allocator) anyerror!void {
         inline 1 => if (p == DayPart.A) Day01.a(allocator) else Day01.b(allocator),
         inline 2 => if (p == DayPart.A) try Day02.a(allocator) else try Day02.b(allocator),
         inline 3 => if (p == DayPart.A) try Day03.a(allocator) else try Day03.b(allocator),
+        inline 4 => if (p == DayPart.A) try Day04.a(allocator) else try Day04.b(allocator),
         inline else => {},
     }
 }
@@ -86,6 +88,7 @@ fn run_day(d: u8, allocator: std.mem.Allocator) anyerror!f64 {
 }
 
 pub fn main() !void {
+    std.debug.print("\n", .{});
     const allocator = std.heap.page_allocator;
 
     var args = try std.process.ArgIterator.initWithAllocator(allocator);

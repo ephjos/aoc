@@ -6,7 +6,7 @@ pub fn build(b: *std.Build) void {
 
     // Define options
     const benchmark = b.option(bool, "benchmark", "Build in benchmark mode") orelse false;
-    const samples = b.option(u32, "samples", "Number of iterations to time in benchmark mode") orelse 1024;
+    const samples = b.option(u32, "samples", "Number of iterations to time in benchmark mode") orelse 8;
 
     const options = b.addOptions();
     options.addOption(bool, "benchmark", benchmark);
