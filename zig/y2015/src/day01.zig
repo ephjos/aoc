@@ -1,8 +1,7 @@
 const std = @import("std");
 const config = @import("config");
-const input_text = @embedFile("./inputs/d01");
 
-pub fn a(_: std.mem.Allocator) void {
+pub fn a(input_text: []const u8, _: std.mem.Allocator) !void {
     var floor: i32 = 0;
     for (input_text) |c| {
         switch (c) {
@@ -17,7 +16,7 @@ pub fn a(_: std.mem.Allocator) void {
     }
 }
 
-pub fn b(_: std.mem.Allocator) void {
+pub fn b(input_text: []const u8, _: std.mem.Allocator) !void {
     var floor: i32 = 0;
     var position: usize = 0;
     for (input_text, 0..) |c, i| {

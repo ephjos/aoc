@@ -1,8 +1,7 @@
 const std = @import("std");
 const config = @import("config");
-const input_text = @embedFile("./inputs/d02");
 
-pub fn a(_: std.mem.Allocator) anyerror!void {
+pub fn a(input_text: []const u8, _: std.mem.Allocator) !void {
     var total_paper_sqft: u32 = 0;
     var lines = std.mem.splitAny(u8, input_text, "\n");
     while (lines.next()) |line| {
@@ -29,7 +28,7 @@ pub fn a(_: std.mem.Allocator) anyerror!void {
     }
 }
 
-pub fn b(_: std.mem.Allocator) anyerror!void {
+pub fn b(input_text: []const u8, _: std.mem.Allocator) !void {
     var total_ribbon_ft: u32 = 0;
     var lines = std.mem.splitAny(u8, input_text, "\n");
     while (lines.next()) |line| {

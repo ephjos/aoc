@@ -1,6 +1,5 @@
 const std = @import("std");
 const config = @import("config");
-const input_text = @embedFile("./inputs/d03");
 
 const Point = @Vector(2, i32);
 
@@ -9,7 +8,7 @@ const DOWN = Point{ 0, -1 };
 const LEFT = Point{ -1, 0 };
 const RIGHT = Point{ 1, 0 };
 
-pub fn a(allocator: std.mem.Allocator) anyerror!void {
+pub fn a(input_text: []const u8, allocator: std.mem.Allocator) !void {
     var houses = std.hash_map.AutoHashMap(Point, void).init(allocator);
     defer houses.deinit();
 
@@ -33,7 +32,7 @@ pub fn a(allocator: std.mem.Allocator) anyerror!void {
     }
 }
 
-pub fn b(allocator: std.mem.Allocator) anyerror!void {
+pub fn b(input_text: []const u8, allocator: std.mem.Allocator) !void {
     var houses = std.hash_map.AutoHashMap(Point, void).init(allocator);
     defer houses.deinit();
 

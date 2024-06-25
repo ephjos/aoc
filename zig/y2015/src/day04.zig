@@ -1,8 +1,7 @@
 const std = @import("std");
 const config = @import("config");
-const input_text = @embedFile("./inputs/d04");
 
-pub fn a(_: std.mem.Allocator) anyerror!void {
+pub fn a(input_text: []const u8, _: std.mem.Allocator) !void {
     var lines = std.mem.splitAny(u8, input_text, "\n");
     const key = lines.first();
 
@@ -44,7 +43,7 @@ fn checkMd5Interval(out: *std.atomic.Value(usize), key: []const u8, start: usize
     }
 }
 
-pub fn b(allocator: std.mem.Allocator) anyerror!void {
+pub fn b(input_text: []const u8, allocator: std.mem.Allocator) !void {
     const INITIAL_SUFFIX = std.math.maxInt(usize);
 
     var thread_pool: std.Thread.Pool = undefined;
