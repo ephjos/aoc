@@ -1,179 +1,154 @@
 const std = @import("std");
 const config = @import("config");
 
-fn encode(in: std.ArrayList(u32), allocator: std.mem.Allocator) !std.ArrayList(u32) {
-    var out = std.ArrayList(u32).init(allocator);
-
-    var run_length: u32 = 1;
-    for (1..in.items.len) |i| {
-        const c = in.items[i];
-        const p = in.items[i - 1];
-        if (c == p) {
-            run_length += 1;
-        } else {
-            try out.append(run_length);
-            try out.append(p);
-            run_length = 1;
-        }
-    }
-
-    try out.append(run_length);
-    try out.append(in.items[in.items.len - 1]);
-    return out;
-}
-
 test "encode" {
     const allocator = std.testing.allocator;
     {
-        const in = [_]u32{1};
-        const out = [_]u32{ 1, 1 };
+        const in = [_]u8{1};
+        const expected = [_]u8{ 1, 1 };
 
-        var in_list = std.ArrayList(u32).init(allocator);
-        defer in_list.deinit();
+        var out = try allocator.alloc(u8, 1 << 12);
+        defer allocator.free(out);
 
-        for (0..in.len) |i| {
-            try in_list.append(in[i]);
-        }
+        const out_len = try encode__(in.len, &in, &out, allocator);
 
-        const result = try encode(in_list, allocator);
-        defer result.deinit();
+        try std.testing.expectEqual(expected.len, out_len);
 
-        try std.testing.expectEqual(out.len, result.items.len);
-
-        for (0..out.len) |i| {
-            try std.testing.expectEqual(out[i], result.items[i]);
+        for (0..out_len) |i| {
+            try std.testing.expectEqual(expected[i], out[i]);
         }
     }
     {
-        const in = [_]u32{ 1, 1 };
-        const out = [_]u32{ 2, 1 };
+        const in = [_]u8{ 1, 1 };
+        const expected = [_]u8{ 2, 1 };
 
-        var in_list = std.ArrayList(u32).init(allocator);
-        defer in_list.deinit();
+        var out = try allocator.alloc(u8, 1 << 12);
+        defer allocator.free(out);
 
-        for (0..in.len) |i| {
-            try in_list.append(in[i]);
-        }
+        const out_len = try encode__(in.len, &in, &out, allocator);
 
-        const result = try encode(in_list, allocator);
-        defer result.deinit();
+        try std.testing.expectEqual(expected.len, out_len);
 
-        try std.testing.expectEqual(out.len, result.items.len);
-
-        for (0..out.len) |i| {
-            try std.testing.expectEqual(out[i], result.items[i]);
+        for (0..out_len) |i| {
+            try std.testing.expectEqual(expected[i], out[i]);
         }
     }
     {
-        const in = [_]u32{ 2, 1 };
-        const out = [_]u32{ 1, 2, 1, 1 };
+        const in = [_]u8{ 2, 1 };
+        const expected = [_]u8{ 1, 2, 1, 1 };
 
-        var in_list = std.ArrayList(u32).init(allocator);
-        defer in_list.deinit();
+        var out = try allocator.alloc(u8, 1 << 12);
+        defer allocator.free(out);
 
-        for (0..in.len) |i| {
-            try in_list.append(in[i]);
-        }
+        const out_len = try encode__(in.len, &in, &out, allocator);
 
-        const result = try encode(in_list, allocator);
-        defer result.deinit();
+        try std.testing.expectEqual(expected.len, out_len);
 
-        try std.testing.expectEqual(out.len, result.items.len);
-
-        for (0..out.len) |i| {
-            try std.testing.expectEqual(out[i], result.items[i]);
+        for (0..out_len) |i| {
+            try std.testing.expectEqual(expected[i], out[i]);
         }
     }
     {
-        const in = [_]u32{ 1, 2, 1, 1 };
-        const out = [_]u32{ 1, 1, 1, 2, 2, 1 };
+        const in = [_]u8{ 1, 2, 1, 1 };
+        const expected = [_]u8{ 1, 1, 1, 2, 2, 1 };
 
-        var in_list = std.ArrayList(u32).init(allocator);
-        defer in_list.deinit();
+        var out = try allocator.alloc(u8, 1 << 12);
+        defer allocator.free(out);
 
-        for (0..in.len) |i| {
-            try in_list.append(in[i]);
-        }
+        const out_len = try encode__(in.len, &in, &out, allocator);
 
-        const result = try encode(in_list, allocator);
-        defer result.deinit();
+        try std.testing.expectEqual(expected.len, out_len);
 
-        try std.testing.expectEqual(out.len, result.items.len);
-
-        for (0..out.len) |i| {
-            try std.testing.expectEqual(out[i], result.items[i]);
+        for (0..out_len) |i| {
+            try std.testing.expectEqual(expected[i], out[i]);
         }
     }
     {
-        const in = [_]u32{ 1, 1, 1, 2, 2, 1 };
-        const out = [_]u32{ 3, 1, 2, 2, 1, 1 };
+        const in = [_]u8{ 1, 1, 1, 2, 2, 1 };
+        const expected = [_]u8{ 3, 1, 2, 2, 1, 1 };
 
-        var in_list = std.ArrayList(u32).init(allocator);
-        defer in_list.deinit();
+        var out = try allocator.alloc(u8, 1 << 12);
+        defer allocator.free(out);
 
-        for (0..in.len) |i| {
-            try in_list.append(in[i]);
-        }
+        const out_len = try encode__(in.len, &in, &out, allocator);
 
-        const result = try encode(in_list, allocator);
-        defer result.deinit();
+        try std.testing.expectEqual(expected.len, out_len);
 
-        try std.testing.expectEqual(out.len, result.items.len);
-
-        for (0..out.len) |i| {
-            try std.testing.expectEqual(out[i], result.items[i]);
+        for (0..out_len) |i| {
+            try std.testing.expectEqual(expected[i], out[i]);
         }
     }
+}
+
+fn encode__(in_len: usize, in: []const u8, out: *[]u8, _: std.mem.Allocator) !usize {
+    var out_i: usize = 0;
+    var run_length: u8 = 1;
+    for (1..in_len) |i| {
+        const c = in[i];
+        const p = in[i - 1];
+        if (c != p) {
+            out.*[out_i] = run_length;
+            out_i += 1;
+            out.*[out_i] = p;
+            out_i += 1;
+            run_length = 0;
+        }
+        run_length += 1;
+    }
+
+    out.*[out_i] = run_length;
+    out_i += 1;
+    out.*[out_i] = in[in_len - 1];
+    out_i += 1;
+    return out_i;
 }
 
 pub fn a(input_text: []const u8, allocator: std.mem.Allocator) !void {
     const s = std.mem.trim(u8, input_text, " \n");
-    var digits = std.ArrayList(u32).init(allocator);
 
-    for (0..s.len) |i| {
-        try digits.append(s[i] - 48);
+    var x = try allocator.alloc(u8, 1 << 24);
+    defer allocator.free(x);
+    var x_len: usize = s.len;
+
+    var y = try allocator.alloc(u8, 1 << 24);
+    defer allocator.free(y);
+    var y_len: usize = 0;
+
+    for (0..x_len) |i| {
+        x[i] = s[i] - 48;
     }
 
-    for (0..40) |_| {
-        const out = try encode(digits, allocator);
-        digits.deinit();
-        digits = out;
-    }
-    defer digits.deinit();
-
-    var len: u32 = 0;
-
-    for (digits.items) |d| {
-        len += std.math.log10(d) + 1;
+    inline for (0..20) |_| {
+        y_len = try encode__(x_len, x, &y, allocator);
+        x_len = try encode__(y_len, y, &x, allocator);
     }
 
     if (!config.benchmark) {
-        std.debug.print("day 10 a: {d}\n", .{len});
+        std.debug.print("day 10 a: {d}\n", .{x_len});
     }
 }
 
 pub fn b(input_text: []const u8, allocator: std.mem.Allocator) !void {
     const s = std.mem.trim(u8, input_text, " \n");
-    var digits = std.ArrayList(u32).init(allocator);
 
-    for (0..s.len) |i| {
-        try digits.append(s[i] - 48);
+    var x = try allocator.alloc(u8, 1 << 24);
+    defer allocator.free(x);
+    var x_len: usize = s.len;
+
+    var y = try allocator.alloc(u8, 1 << 24);
+    defer allocator.free(y);
+    var y_len: usize = 0;
+
+    for (0..x_len) |i| {
+        x[i] = s[i] - 48;
     }
 
-    for (0..50) |_| {
-        const out = try encode(digits, allocator);
-        digits.deinit();
-        digits = out;
-    }
-    defer digits.deinit();
-
-    var len: u32 = 0;
-
-    for (digits.items) |d| {
-        len += std.math.log10(d) + 1;
+    inline for (0..25) |_| {
+        y_len = try encode__(x_len, x, &y, allocator);
+        x_len = try encode__(y_len, y, &x, allocator);
     }
 
     if (!config.benchmark) {
-        std.debug.print("day 10 b: {d}\n", .{len});
+        std.debug.print("day 10 b: {d}\n", .{x_len});
     }
 }
