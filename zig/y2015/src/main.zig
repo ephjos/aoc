@@ -14,6 +14,7 @@ const Day10 = @import("./day10.zig");
 const Day11 = @import("./day11.zig");
 const Day12 = @import("./day12.zig");
 const Day13 = @import("./day13.zig");
+const Day14 = @import("./day14.zig");
 
 const NANOS_IN_MILI: f64 = 1_000_000;
 
@@ -62,6 +63,7 @@ fn run_day_part(d: u8, p: DayPart, inputs: std.ArrayList([]u8), allocator: std.m
         inline 11 => if (p == DayPart.A) try Day11.a(inputs.items[d - 1], allocator) else try Day11.b(inputs.items[d - 1], allocator),
         inline 12 => if (p == DayPart.A) try Day12.a(inputs.items[d - 1], allocator) else try Day12.b(inputs.items[d - 1], allocator),
         inline 13 => if (p == DayPart.A) try Day13.a(inputs.items[d - 1], allocator) else try Day13.b(inputs.items[d - 1], allocator),
+        inline 14 => if (p == DayPart.A) try Day14.a(inputs.items[d - 1], allocator) else try Day14.b(inputs.items[d - 1], allocator),
         inline else => {},
     }
 }

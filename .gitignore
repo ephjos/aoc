@@ -26,3 +26,11 @@ __pycache__
 .token
 inputs
 *.csv
+
+# Images
+*.png
+*.jpeg
+*.jpg
+
+# Data files
+*.dat
