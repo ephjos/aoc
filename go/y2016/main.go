@@ -16,6 +16,10 @@ var DAYS = [...]Day{
 	day03{},
 	day04{},
 	day05{},
+	day06{},
+	day07{},
+	day08{},
+	day09{},
 }
 
 func get_inputs() [25]string {

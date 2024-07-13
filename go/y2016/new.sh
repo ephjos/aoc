@@ -9,11 +9,16 @@ fi
 cat > "day$1.go" << EOF
 package main
 
+/*
 import (
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
+)
+*/
+
+import (
 )
 
 type day$1 struct{}

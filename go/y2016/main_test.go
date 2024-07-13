@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -35,6 +36,7 @@ func testDay(t *testing.T, d Day, a_cases []TC, b_cases []TC) {
 func BenchmarkAll(b *testing.B) {
 	inputs := get_inputs()
 
+	os.Stdout, _ = os.Open(os.DevNull)
 	b.ResetTimer()
 
 	for i, day := range DAYS {
